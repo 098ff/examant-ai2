@@ -29,8 +29,8 @@ class EnrollmentRecord(BaseModel):
 class ExamSlotRecord(BaseModel):
     slot_id: str = Field(..., description="Unique slot identifier, e.g., 'D1_S1'")
     day_index: int = Field(..., ge=1, description="Day index starting at 1")
-    slot_index: Literal[1, 2] = Field(..., description="1 = Morning (เช้า), 2 = Afternoon (บ่าย)")
-    label: str = Field(..., description="Display label, e.g., 'วันที่ 1 ช่วงเช้า'")
+    slot_index: Literal[1, 2] = Field(..., description="1 = Morning, 2 = Afternoon")
+    label: str = Field(..., description="Display label, e.g., 'Day 1 Morning'")
 
 
 class ExamInstanceDocument(BaseModel):

@@ -1,11 +1,11 @@
 """
-[งานของคนที่ 3: โรส]
+[Task for Person 3: Rose (Sasarose Buranapin)]
 Exam Schedule Grid Component (`frontend/components/schedule_grid.py`).
 
-แสดงผลตารางสอบแบ่งตามวัน (Day 1..D) และช่วงสอบ 2 ช่วงต่อวัน:
-- ช่วงที่ 1: ช่วงเช้า (`slot_index = 1`)
-- ช่วงที่ 2: ช่วงบ่าย (`slot_index = 2`)
-พร้อมแสดงรายชื่อกรณีที่นักศึกษาต้องสอบติดกัน เช้า-บ่าย ในวันเดียวกัน (`consecutive_cases`)
+Renders examination timetable grid partitioned by day (Day 1..D) and 2 slots per day:
+- Slot 1: Morning (`slot_index = 1`)
+- Slot 2: Afternoon (`slot_index = 2`)
+Also displays details for students having consecutive morning and afternoon exams on the same day (`consecutive_cases`).
 """
 
 from collections import defaultdict
@@ -49,8 +49,8 @@ def render_schedule_grid(
         rows.append(
             {
                 "วันสอบ": f"วันที่ {day_idx}",
-                "🌅 ช่วงเช้า (slot_index = 1)": days_map[day_idx]["ช่วงเช้า (Slot 1)"],
-                "🌇 ช่วงบ่าย (slot_index = 2)": days_map[day_idx]["ช่วงบ่าย (Slot 2)"],
+                "ช่วงเช้า (Slot 1: Morning)": days_map[day_idx]["ช่วงเช้า (Slot 1)"],
+                "ช่วงบ่าย (Slot 2: Afternoon)": days_map[day_idx]["ช่วงบ่าย (Slot 2)"],
             }
         )
 
@@ -61,7 +61,7 @@ def render_schedule_grid(
     if validation_details:
         consecutive_cases = validation_details.get("consecutive_cases", [])
         if consecutive_cases:
-            with st.expander(f"🔍 ดูรายละเอียดนักศึกษาที่ต้องสอบติดกัน เช้า-บ่าย ({len(consecutive_cases)} กรณี)"):
+            with st.expander(f"ดูรายละเอียดนักศึกษาที่ต้องสอบติดกัน เช้า-บ่าย ({len(consecutive_cases)} กรณี)", icon=":material/search:"):
                 st.dataframe(pd.DataFrame(consecutive_cases), use_container_width=True, hide_index=True)
         else:
-            st.success("🎉 ไม่มีนักศึกษาคนใดต้องสอบติดกันทั้งเช้าและบ่ายในวันเดียวกันเลย (Penalty = 0)!")
+            st.success("ไม่มีนักศึกษาคนใดต้องสอบติดกันทั้งเช้าและบ่ายในวันเดียวกันเลย (Penalty = 0)!", icon=":material/celebration:")

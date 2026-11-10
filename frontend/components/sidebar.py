@@ -1,8 +1,8 @@
 """
-[งานของคนที่ 3: โรส]
+[Task for Person 3: Rose (Sasarose Buranapin)]
 Sidebar Parameter Tuning Component (`frontend/components/sidebar.py`).
 
-รวม Sliders และ Number Inputs สำหรับปรับจูนพารามิเตอร์ตามตารางใน `docs/01-project-idea-spec.md` (หัวข้อ 5):
+Provides sliders and numeric inputs for parameter tuning according to `docs/01-project-idea-spec.md` (Section 5):
 - Dataset selector (`instance_id`)
 - Shared parameters: `seed`, `runs`
 - Random Feasible: `max_attempts`
@@ -15,13 +15,13 @@ import streamlit as st
 
 def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Render sidebar controls and return selected dataset + parameter dictionary."""
-    st.sidebar.header("🐜 ExamAnt Configuration")
+    st.sidebar.header(":material/pest_control: ExamAnt Configuration")
 
     if not instances:
-        st.sidebar.warning("⚠️ ไม่พบชุดข้อมูลใน MongoDB")
+        st.sidebar.warning("ไม่พบชุดข้อมูลใน MongoDB", icon=":material/warning:")
         st.sidebar.caption("เริ่มรัน MongoDB และ Seed ข้อมูลเข้าสู่ระบบ:")
         from api_client import seed_database
-        if st.sidebar.button("🌱 Seed Database", type="primary"):
+        if st.sidebar.button("Seed Database", icon=":material/database:", type="primary"):
             try:
                 res = seed_database()
                 st.sidebar.success(res.get("message", "Seeded successfully!"))
@@ -71,10 +71,10 @@ def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
                 "จำนวนครั้งสุ่มสูงสุด (`max_attempts`)", min_value=1, max_value=10000, value=400, step=50
             )
 
-    with st.sidebar.expander("🛠️ เครื่องมือจัดการฐานข้อมูล (Database Tools)"):
+    with st.sidebar.expander(":material/build: เครื่องมือจัดการฐานข้อมูล (Database Tools)"):
         st.caption("อัปเดตหรือเพิ่มชุดข้อมูลล่าสุดลง MongoDB:")
         from api_client import seed_database
-        if st.button("🔄 Re-seed Datasets เข้า MongoDB"):
+        if st.button("Re-seed Datasets เข้า MongoDB", icon=":material/refresh:"):
             try:
                 res = seed_database()
                 st.success(res.get("message", "Seeded successfully!"))

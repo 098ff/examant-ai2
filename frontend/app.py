@@ -1,11 +1,11 @@
 """
-[งานของคนที่ 3: โรส]
+[Task for Person 3: Rose (Sasarose Buranapin)]
 ExamAnt Streamlit Main Application (`frontend/app.py`).
 
-แบ่งหน้าจอออกเป็น 3 Tabs เพื่อรองรับการทดลองและการอัดวิดีโอ 10 นาที:
-- Tab 1: 📚 สำรวจชุดข้อมูลและกราฟวิชาที่ชนกัน (Dataset & Conflict Graph)
-- Tab 2: 🧪 ทดลองรันรายอัลกอริทึม (Single Algorithm Run & Schedule Grid)
-- Tab 3: 🏆 เปรียบเทียบทั้ง 3 อัลกอริทึม (Greedy vs Random Feasible vs ACO)
+Organized into 3 main tabs for interactive experimentation and 10-minute presentation:
+- Tab 1: Dataset & Conflict Graph Explorer
+- Tab 2: Single Algorithm Run & Schedule Grid
+- Tab 3: Multi-Algorithm Comparison (Greedy vs Random Feasible vs ACO)
 """
 
 import requests
@@ -28,11 +28,11 @@ from components.sidebar import render_sidebar
 
 st.set_page_config(
     page_title="ExamAnt — ACO Exam Timetabling",
-    page_icon="🐜",
+    page_icon=":material/pest_control:",
     layout="wide",
 )
 
-st.title("🐜 ExamAnt — จัดตารางสอบไม่ให้ชน และลดการสอบติดกันด้วย ACO")
+st.title(":material/pest_control: ExamAnt — จัดตารางสอบไม่ให้ชน และลดการสอบติดกันด้วย ACO")
 st.caption(
     "เปรียบเทียบ **Greedy**, **Random Feasible** และ **Ant Colony Optimization (ACO)** "
     "ภายใต้ข้อจำกัดห้ามสอบชนกัน และลดการสอบติดกัน (เช้า+บ่าย) ในวันเดียวกัน"
@@ -43,7 +43,7 @@ try:
     instances = fetch_instances()
 except requests.exceptions.HTTPError as exc:
     if exc.response is not None and exc.response.status_code == 503:
-        st.error("⚠️ **MongoDB ยังไม่พร้อมใช้งาน (Service Unavailable - HTTP 503)**")
+        st.error("**MongoDB ยังไม่พร้อมใช้งาน (Service Unavailable - HTTP 503)**", icon=":material/warning:")
         st.warning(
             "โปรดตรวจสอบว่าได้รัน MongoDB Container หรือยัง โดยใช้คำสั่งในเทอร์มินัล:\n\n"
             "```bash\n"
@@ -63,7 +63,7 @@ except Exception as exc:
     st.stop()
 
 if not instances:
-    st.warning("⚠️ **ยังไม่มีชุดข้อมูลใน MongoDB (Database is empty)**")
+    st.warning("**ยังไม่มีชุดข้อมูลใน MongoDB (Database is empty)**", icon=":material/warning:")
     st.info(
         "ชุดข้อมูล mock ถูกนำออกแล้ว ข้อมูลต้องถูกบันทึกลง MongoDB จริงๆ ผ่าน Seeder Script\n\n"
         "กรุณากดปุ่มด้านล่างเพื่อ Seed ข้อมูลตั้งต้นเข้า MongoDB หรือรันคำสั่ง:\n"
@@ -71,7 +71,7 @@ if not instances:
         "python backend/scripts/seed_db.py\n"
         "```"
     )
-    if st.button("🌱 Seed Database ตอนนี้", type="primary"):
+    if st.button("Seed Database ตอนนี้", icon=":material/database:", type="primary"):
         try:
             with st.spinner("กำลัง seed ข้อมูลเข้า MongoDB..."):
                 res = seed_database()
@@ -90,9 +90,9 @@ instance_detail = fetch_instance_detail(instance_id)
 
 tab1, tab2, tab3 = st.tabs(
     [
-        "📚 1. ข้อมูลรายวิชา & กราฟความขัดแย้ง",
-        "🧪 2. ทดลองรันเดี่ยว (Single Run)",
-        "🏆 3. เปรียบเทียบ 3 อัลกอริทึม (Multi-Seed Compare)",
+        ":material/menu_book: 1. ข้อมูลรายวิชา & กราฟความขัดแย้ง",
+        ":material/science: 2. ทดลองรันเดี่ยว (Single Run)",
+        ":material/leaderboard: 3. เปรียบเทียบ 3 อัลกอริทึม (Multi-Seed Compare)",
     ]
 )
 
@@ -116,22 +116,22 @@ with tab1:
 # TAB 2: Single Algorithm Run
 # ==============================================================================
 with tab2:
-    st.subheader("🧪 ทดลองจัดตารางสอบรายอัลกอริทึม")
+    st.subheader(":material/science: ทดลองจัดตารางสอบรายอัลกอริทึม")
     col_algo, col_btn = st.columns([3, 1])
     with col_algo:
         selected_algo = st.radio(
             "เลือกอัลกอริทึมที่ต้องการรัน:",
             options=["aco", "random_feasible", "greedy"],
             format_func=lambda x: {
-                "aco": "🐜 Ant Colony Optimization (ACO)",
-                "random_feasible": "🎲 Random Feasible",
-                "greedy": "⚡ Greedy Baseline",
+                "aco": ":material/pest_control: Ant Colony Optimization (ACO)",
+                "random_feasible": ":material/casino: Random Feasible",
+                "greedy": ":material/bolt: Greedy Baseline",
             }[x],
             horizontal=True,
         )
     with col_btn:
         st.write("")
-        run_single_clicked = st.button("▶️ รันจัดตารางสอบ (Solve)", type="primary", use_container_width=True)
+        run_single_clicked = st.button("รันจัดตารางสอบ (Solve)", icon=":material/play_arrow:", type="primary", use_container_width=True)
 
     if run_single_clicked:
         params_payload = {
@@ -156,7 +156,7 @@ with tab2:
         m4.metric("จำนวนตารางที่ลอง (Attempts)", metrics["attempts"])
         m5.metric("เวลาที่ใช้ (Runtime)", f"{metrics['runtime_ms']:.2f} ms")
 
-        st.markdown("#### 📅 ตารางสอบที่จัดได้ (2 ช่วงต่อวัน: เช้า / บ่าย)")
+        st.markdown("#### :material/calendar_month: ตารางสอบที่จัดได้ (2 ช่วงต่อวัน: เช้า / บ่าย)")
         render_schedule_grid(instance_detail, res.get("schedule", []), res.get("validation_details"))
 
         if res.get("history"):
@@ -166,13 +166,13 @@ with tab2:
 # TAB 3: Multi-Algorithm Comparison
 # ==============================================================================
 with tab3:
-    st.subheader("🏆 เปรียบเทียบ Greedy vs Random Feasible vs ACO")
+    st.subheader(":material/leaderboard: เปรียบเทียบ Greedy vs Random Feasible vs ACO")
     st.write(
         f"รันเปรียบเทียบทั้ง 3 อัลกอริทึมบนชุดข้อมูล **`{instance_id}`** "
         f"จำนวน **{config['runs']} รอบ (Seeds {config['seed']} ถึง {config['seed'] + config['runs'] - 1})**"
     )
 
-    if st.button("🚀 เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)", type="primary"):
+    if st.button("เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)", icon=":material/rocket_launch:", type="primary"):
         compare_params = {
             "random_feasible": {"max_attempts": config["max_attempts"]},
             "aco": config["aco"],

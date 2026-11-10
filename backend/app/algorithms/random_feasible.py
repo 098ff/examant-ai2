@@ -1,14 +1,15 @@
 """
-[งานของคนที่ 1: ไมไม]
+[Task for Person 1: Mai (Sippapas Chavanont)]
 Random Feasible Baseline Algorithm (`backend/app/algorithms/random_feasible.py`).
 
-กติกาจาก `docs/01-project-idea-spec.md` (หัวข้อ 7.2):
-1. ใช้ `rng = random.Random(params.seed)` เพื่อให้ทำซ้ำผลเดิมได้ (Reproducible)
-2. วนลูปสร้างตารางไม่เกินงบ `params.max_attempts` ครั้ง:
-   - ในแต่ละ attempt สร้างตารางทีละวิชา โดยสุ่มเลือกจาก `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`
-   - หากมีวิชาใดที่ `feasible_slots` ว่างเปล่า (ติดทางตัน / Dead-end) ให้ถือว่า attempt นั้นล้มเหลวและเริ่ม attempt ถัดไป
-3. สำหรับทุกตารางที่จัดครบทุกวิชา คำนวณค่า penalty (หรือใช้ `validate_and_score_schedule`)
-   และเก็บตารางที่มี `penalty_score` ต่ำที่สุด (`best_schedule`) พร้อมบันทึก `best_iteration` และ `history`
+Rules from `docs/01-project-idea-spec.md` (Section 7.2):
+1. Use `rng = random.Random(params.seed)` for reproducibility.
+2. Loop to generate schedules up to `params.max_attempts` budget:
+   - In each attempt, construct the schedule course-by-course by randomly choosing from:
+     `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`
+   - If any course encounters an empty `feasible_slots` (dead-end), mark the attempt failed and continue.
+3. For every fully assigned schedule, compute penalty (or use `validate_and_score_schedule`),
+   and track the schedule with the lowest `penalty_score` (`best_schedule`) along with `best_iteration` and `history`.
 """
 
 import random
@@ -31,9 +32,10 @@ def solve_random_feasible(problem: ProblemData, params: AlgorithmParameters) -> 
     graph = ConflictGraph(problem)
 
     # ==========================================================================
-    # TODO [คนที่ 1 - ไมไม]:
-    # พัฒนาลูปสุ่มสร้างตารางจำนวน `params.max_attempts` รอบ และเก็บตารางที่ Penalty ต่ำสุด
-    # (ด้านล่างเป็นโค้ด Stub เบื้องต้นที่สุ่ม 1 รอบเพื่อให้ Frontend ทดสอบเชื่อม API ได้ทันที)
+    # TODO [Person 1 - Mai]:
+    # Implement random schedule generation loop for `params.max_attempts` rounds
+    # and keep the schedule with minimum penalty score.
+    # (Below is starter stub code that generates 1 round for early frontend testing)
     # ==========================================================================
     best_schedule: Optional[Dict[str, str]] = {}
     ordered_courses = graph.get_ordered_courses()

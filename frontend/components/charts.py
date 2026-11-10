@@ -1,11 +1,11 @@
 """
-[งานของคนที่ 3: โรส]
+[Task for Person 3: Rose (Sasarose Buranapin)]
 Visualization Charts Component (`frontend/components/charts.py`).
 
-ประกอบด้วยกราฟหลักสำหรับการนำเสนอในวิดีโอ 10 นาที (`docs/00-idea-proposal.md` หัวข้อ 8):
-1. Course Conflict Graph (กราฟวิชาที่เชื่อมกันเมื่อมีนักศึกษาลงเรียนร่วมกัน)
-2. Convergence Curve (กราฟค่า Penalty ดีที่สุดเทียบกับ Iteration ของ ACO)
-3. Multi-Algorithm Comparison Bar/Box Plot (เปรียบเทียบ Greedy vs Random Feasible vs ACO)
+Provides key visualization charts for experimental evaluation and presentation:
+1. Course Conflict Graph (connected courses sharing enrolled students)
+2. Convergence Curve (best penalty score vs ACO iterations)
+3. Multi-Algorithm Comparison Bar/Box Plot (Greedy vs Random Feasible vs ACO)
 """
 
 from typing import Any, Dict, List
@@ -151,7 +151,7 @@ def render_comparison_charts(compare_resp: Dict[str, Any]) -> None:
             }
         )
     df_sum = pd.DataFrame(summary_rows)
-    st.subheader("📊 ตารางสรุปผลการทดลองเปรียบเทียบ (Summary Metrics)")
+    st.subheader(":material/bar_chart: ตารางสรุปผลการทดลองเปรียบเทียบ (Summary Metrics)")
     st.dataframe(df_sum, use_container_width=True, hide_index=True)
 
     # Bar chart of Best vs Mean Penalty
