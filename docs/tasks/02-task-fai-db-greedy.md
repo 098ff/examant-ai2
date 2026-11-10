@@ -8,7 +8,7 @@
 > **Assignee:** 6631305321 Chanatda Konchom (Fai)  
 > **Role:** Infrastructure, Data Engineering & Greedy Baseline Developer  
 > **Primary Files:**  
-> 1. [`backend/scripts/seed_db.py`](../../backend/scripts/seed_db.py) & [`backend/scripts/sample_instances.json`](../../backend/scripts/sample_instances.json)  
+> 1. [`backend/scripts/seed_db.py`](../../backend/scripts/seed_db.py) (Programmatic generator & MongoDB seeder)  
 > 2. [`backend/app/algorithms/greedy.py`](../../backend/app/algorithms/greedy.py)  
 > 3. [`docker-compose.yml`](../../docker-compose.yml) & [`backend/app/database.py`](../../backend/app/database.py) *(Already configured)*
 
@@ -32,7 +32,7 @@
     - **Planted Feasible Coloring Technique (to guarantee solvability):**
       1. Partition courses into $2D$ slot groups upfront.
       2. When generating student enrollments (2–3 courses per student), sample courses from **distinct slot groups** to guarantee at least one valid schedule with `hard_conflict_count == 0`.
-      3. Save instances to `backend/scripts/sample_instances.json` and upsert into MongoDB via `seed_db.py`.
+      3. Upsert datasets directly into MongoDB via `seed_db.py` or `POST /instances/seed`. No static mock JSON file is used.
 
 ---
 
@@ -90,7 +90,7 @@ Tasks:
    - For each course, fetch `feasible_slots = graph.get_feasible_slots(...)`.
    - Select the slot that minimizes `graph.calculate_delta_penalty(...)` (tie-break by slot order).
    - Return clean result via `build_solve_response(...)`.
-2. In @backend/scripts/seed_db.py (and @backend/scripts/sample_instances.json), generate 3 synthetic benchmark instances (`easy_01`, `medium_01`, `hard_01`) in addition to `demo_01`:
+2. In @backend/scripts/seed_db.py, generate 3 synthetic benchmark instances (`easy_01`, `medium_01`, `hard_01`) in addition to `demo_01`:
    - Use the Planted Feasible Assignment technique during enrollment generation so every dataset is mathematically proven to have a zero-conflict solution.
    - Validate each dataset with `validate_problem_input` and test run `solve_greedy` before upserting into MongoDB.
 ```

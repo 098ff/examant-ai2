@@ -19,7 +19,7 @@
 | Member | Primary Role | Key Files | Assigned Feature Branch | Individual Task Guide |
 | :--- | :--- | :--- | :--- | :--- |
 | **6630333721 Sippapas Chavanont (Mai)** | Master technical specification, **ACO** & **Random Feasible** algorithms, `/solve` and `/compare` APIs | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-maimai-lead-aco.md](01-task-maimai-lead-aco.md) |
-| **6631305321 Chanatda Konchom (Fai)** | Repo & Docker setup, **Dataset Generator (3 difficulty levels)** + **MongoDB Seeder**, **Greedy** baseline | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/scripts/sample_instances.json`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.md](02-task-fai-db-greedy.md) |
+| **6631305321 Chanatda Konchom (Fai)** | Repo & Docker setup, **Dataset Generator (3 difficulty levels)** + **MongoDB Seeder**, **Greedy** baseline | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.md](02-task-fai-db-greedy.md) |
 | **6632213421 Sasarose Buranapin (Rose)** | **Streamlit Frontend**, 2-slots-per-day colored timetable grid, interactive charts, and benchmark evaluation report | - `frontend/app.py`<br>- `frontend/components/sidebar.py`<br>- `frontend/components/schedule_grid.py`<br>- `frontend/components/charts.py` | `feat/streamlit-frontend-viz` | 👉 [03-task-rose-frontend.md](03-task-rose-frontend.md) |
 
 ---

@@ -8,6 +8,7 @@ ExamAnt Streamlit Main Application (`frontend/app.py`).
 - Tab 3: 🏆 เปรียบเทียบทั้ง 3 อัลกอริทึม (Greedy vs Random Feasible vs ACO)
 """
 
+import requests
 import streamlit as st
 from api_client import (
     fetch_conflict_graph,
@@ -15,6 +16,7 @@ from api_client import (
     fetch_instances,
     post_compare,
     post_solve,
+    seed_database,
 )
 from components.charts import (
     render_comparison_charts,
@@ -39,8 +41,44 @@ st.caption(
 # 1. Load dataset instances from Backend
 try:
     instances = fetch_instances()
+except requests.exceptions.HTTPError as exc:
+    if exc.response is not None and exc.response.status_code == 503:
+        st.error("⚠️ **MongoDB ยังไม่พร้อมใช้งาน (Service Unavailable - HTTP 503)**")
+        st.warning(
+            "โปรดตรวจสอบว่าได้รัน MongoDB Container หรือยัง โดยใช้คำสั่งในเทอร์มินัล:\n\n"
+            "```bash\n"
+            "docker compose up -d mongodb\n"
+            "```\n"
+            "หรือหากต้องการรันทั้งระบบพร้อมกัน:\n\n"
+            "```bash\n"
+            "docker compose up --build\n"
+            "```"
+        )
+    else:
+        st.error(f"HTTP Error จาก Backend: {exc}")
+    st.stop()
 except Exception as exc:
     st.error(f"ไม่สามารถเชื่อมต่อกับ FastAPI Backend ได้: {exc}")
+    st.info("ตรวจสอบว่า FastAPI Backend รันอยู่ที่พอร์ต 8000 หรือยัง: `docker compose up -d backend`")
+    st.stop()
+
+if not instances:
+    st.warning("⚠️ **ยังไม่มีชุดข้อมูลใน MongoDB (Database is empty)**")
+    st.info(
+        "ชุดข้อมูล mock ถูกนำออกแล้ว ข้อมูลต้องถูกบันทึกลง MongoDB จริงๆ ผ่าน Seeder Script\n\n"
+        "กรุณากดปุ่มด้านล่างเพื่อ Seed ข้อมูลตั้งต้นเข้า MongoDB หรือรันคำสั่ง:\n"
+        "```bash\n"
+        "python backend/scripts/seed_db.py\n"
+        "```"
+    )
+    if st.button("🌱 Seed Database ตอนนี้", type="primary"):
+        try:
+            with st.spinner("กำลัง seed ข้อมูลเข้า MongoDB..."):
+                res = seed_database()
+            st.success(res.get("message", "Seed ข้อมูลสำเร็จ!"))
+            st.rerun()
+        except Exception as e:
+            st.error(f"เกิดข้อผิดพลาดในการ seed: {e}")
     st.stop()
 
 config = render_sidebar(instances)

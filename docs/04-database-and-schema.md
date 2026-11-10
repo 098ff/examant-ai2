@@ -116,13 +116,18 @@ Solvers (`greedy.py`, `random_feasible.py`, `aco.py`) do not connect directly to
 
 ## 4. Seeding Datasets into MongoDB
 
+> [!IMPORTANT]
+> **Strict MongoDB Requirement:** The project enforces true MongoDB persistence (no static mock JSON fallback). Ensure the MongoDB container is running via `docker compose up -d mongodb`. Data is stored in Docker volume `mongo_data` and persists across container restarts.
+
 1. **Auto-Seed on Startup:**  
-   When launching the backend container, if `exam_instances` is empty, `demo_01` from [`backend/scripts/sample_instances.json`](../backend/scripts/sample_instances.json) is inserted automatically.
+   When launching the backend container, if `exam_instances` is empty, programmatic datasets defined in [`backend/scripts/seed_db.py`](../backend/scripts/seed_db.py) are seeded automatically.
 2. **Manual Seeding (Person 2 - Fai):**
    ```bash
-   # Inside Docker
+   # Run directly via Python / Docker
    docker compose exec backend python -m scripts.seed_db
 
    # Or trigger via HTTP endpoint
    curl -X POST http://localhost:8000/instances/seed
    ```
+3. **Frontend UI Seeding:**
+   On the Streamlit dashboard, click the **"🌱 Seed Database"** button to populate or refresh datasets.

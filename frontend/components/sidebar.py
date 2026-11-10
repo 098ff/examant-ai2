@@ -18,7 +18,16 @@ def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
     st.sidebar.header("🐜 ExamAnt Configuration")
 
     if not instances:
-        st.sidebar.error("ไม่พบชุดข้อมูลจาก Backend (ตรวจสอบว่า FastAPI รันอยู่)")
+        st.sidebar.warning("⚠️ ไม่พบชุดข้อมูลใน MongoDB")
+        st.sidebar.caption("เริ่มรัน MongoDB และ Seed ข้อมูลเข้าสู่ระบบ:")
+        from api_client import seed_database
+        if st.sidebar.button("🌱 Seed Database", type="primary"):
+            try:
+                res = seed_database()
+                st.sidebar.success(res.get("message", "Seeded successfully!"))
+                st.rerun()
+            except Exception as e:
+                st.sidebar.error(f"เกิดข้อผิดพลาด: {e}")
         return {}
 
     instance_options = {
@@ -61,6 +70,17 @@ def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
             max_attempts = st.number_input(
                 "จำนวนครั้งสุ่มสูงสุด (`max_attempts`)", min_value=1, max_value=10000, value=400, step=50
             )
+
+    with st.sidebar.expander("🛠️ เครื่องมือจัดการฐานข้อมูล (Database Tools)"):
+        st.caption("อัปเดตหรือเพิ่มชุดข้อมูลล่าสุดลง MongoDB:")
+        from api_client import seed_database
+        if st.button("🔄 Re-seed Datasets เข้า MongoDB"):
+            try:
+                res = seed_database()
+                st.success(res.get("message", "Seeded successfully!"))
+                st.rerun()
+            except Exception as e:
+                st.error(f"Error: {e}")
 
     return {
         "instance_id": instance_id,

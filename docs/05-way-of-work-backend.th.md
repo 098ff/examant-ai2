@@ -32,8 +32,7 @@ backend/
 │       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph
 │       └── solver.py            # POST /solve, POST /compare
 └── scripts/
-    ├── sample_instances.json    # ข้อมูลตัวอย่างเริ่มต้น (demo_01)
-    └── seed_db.py               # 👩‍💻 [งานฝ้าย - คนที่ 2] สคริปต์สร้าง Dataset จำลองและ Seed ลง MongoDB
+    └── seed_db.py               # 👩‍💻 [งานฝ้าย - คนที่ 2] สคริปต์สร้าง Dataset จำลองแบบ Programmatic และ Seed ลง MongoDB
 ```
 
 ---

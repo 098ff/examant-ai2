@@ -33,6 +33,13 @@ def fetch_conflict_graph(instance_id: str) -> Dict[str, Any]:
     return resp.json()
 
 
+def seed_database() -> Dict[str, Any]:
+    """Call `POST /instances/seed` to trigger dataset seeding directly into MongoDB."""
+    resp = requests.post(f"{BACKEND_API_URL}/instances/seed", timeout=30)
+    resp.raise_for_status()
+    return resp.json()
+
+
 def post_solve(
     instance_id: str,
     algorithm: str,

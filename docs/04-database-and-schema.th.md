@@ -117,8 +117,11 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
 
 ## 4. วิธีรันสคริปต์ Seed ข้อมูลเข้า MongoDB
 
+> [!IMPORTANT]
+> **ข้อกำหนดการใช้ MongoDB จริง:** ระบบนี้ไม่มี mock data fallback ในโค้ดอีกต่อไป ทุกข้อมูลจะถูกบันทึกลง MongoDB จริงๆ ที่รันผ่าน Docker container `mongodb` ข้อมูลจะถูกเก็บคงทนใน Docker volume `mongo_data` ไม่สูญหายเมื่อหยุดหรือรีสตาร์ต container
+
 1. **Auto-Seed ตอนเปิดระบบครั้งแรก:**  
-   เมื่อรัน `docker compose up` หาก Collection `exam_instances` ยังว่างอยู่ ระบบจะนำข้อมูลชุดตัวอย่าง `demo_01` จากไฟล์ [`backend/scripts/sample_instances.json`](../backend/scripts/sample_instances.json) เข้าไปใส่ให้อัตโนมัติ
+   เมื่อรัน `docker compose up` หาก Collection `exam_instances` ยังว่างอยู่ ระบบจะสร้างชุดข้อมูลแบบ Programmatic จาก [`backend/scripts/seed_db.py`](../backend/scripts/seed_db.py) และ Seed เข้า MongoDB ให้อัตโนมัติ
 2. **สั่งรันสคริปต์ Seed ด้วยตัวเอง (หลังจากคนที่ 2 - ฝ้าย เพิ่มชุดข้อมูลใหม่):**
    ```bash
    # กรณีรันผ่าน Docker
@@ -127,3 +130,5 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
    # หรือเรียกผ่าน API Endpoint
    curl -X POST http://localhost:8000/instances/seed
    ```
+3. **Seed ผ่านหน้าเว็บ Streamlit UI:**
+   บนหน้าจอ Streamlit Dashboard สามารถกดปุ่ม **"🌱 Seed Database"** เพื่อ populate หรือรีเซ็ตข้อมูลลง MongoDB ได้ทันที

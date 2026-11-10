@@ -19,7 +19,7 @@
 | สมาชิก | บทบาทหลัก | ไฟล์หลักที่รับผิดชอบ | Branch ที่ได้รับมอบหมาย | เอกสารคู่มือเฉพาะตัว |
 | :--- | :--- | :--- | :--- | :--- |
 | **6630333721 Sippapas Chavanont (Mai)** | กำหนดสเปกกลาง, พัฒนาอัลกอริทึม **ACO** และ **Random Feasible**, ตรวจสอบความถูกต้องของผลลัพธ์ `/solve` และ `/compare` | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-maimai-lead-aco.th.md](01-task-maimai-lead-aco.th.md) |
-| **6631305321 Chanatda Konchom (Fai)** | Setup Repository & Docker, ออกแบบและสร้าง **Dataset Generator (3 ระดับความยาก)** + **MongoDB Seeder**, พัฒนาอัลกอริทึม **Greedy** | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/scripts/sample_instances.json`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.th.md](02-task-fai-db-greedy.th.md) |
+| **6631305321 Chanatda Konchom (Fai)** | Setup Repository & Docker, ออกแบบและสร้าง **Dataset Generator (3 ระดับความยาก)** + **MongoDB Seeder**, พัฒนาอัลกอริทึม **Greedy** | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.th.md](02-task-fai-db-greedy.th.md) |
 | **6632213421 Sasarose Buranapin (Rose)** | พัฒนาหน้าเว็บ **Streamlit Frontend**, ตกแต่งตารางสอบสี 2 ช่วง/วัน, กราฟเปรียบเทียบผล 3 อัลกอริทึม และรันการทดลองสรุปผลสำหรับวิดีโอ 10 นาที | - `frontend/app.py`<br>- `frontend/components/sidebar.py`<br>- `frontend/components/schedule_grid.py`<br>- `frontend/components/charts.py` | `feat/streamlit-frontend-viz` | 👉 [03-task-rose-frontend.th.md](03-task-rose-frontend.th.md) |
 
 ---

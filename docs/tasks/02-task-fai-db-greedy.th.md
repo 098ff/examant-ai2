@@ -8,7 +8,7 @@
 > **ผู้รับผิดชอบ:** 6631305321 Chanatda Konchom (Fai)  
 > **บทบาท:** Infrastructure, Data Engineering & Greedy Baseline Developer  
 > **ไฟล์ที่รับผิดชอบหลัก:**  
-> 1. [`backend/scripts/seed_db.py`](../../backend/scripts/seed_db.py) และ [`backend/scripts/sample_instances.json`](../../backend/scripts/sample_instances.json)  
+> 1. [`backend/scripts/seed_db.py`](../../backend/scripts/seed_db.py) (สคริปต์สร้าง Dataset จำลองและ Seed ลง MongoDB)  
 > 2. [`backend/app/algorithms/greedy.py`](../../backend/app/algorithms/greedy.py)  
 > 3. [`docker-compose.yml`](../../docker-compose.yml) และ [`backend/app/database.py`](../../backend/app/database.py) *(ตั้งค่าโครงสร้างให้เรียบร้อยแล้ว)*
 
@@ -32,7 +32,7 @@
     - **เทคนิคสำคัญเพื่อให้มั่นใจว่ามีตารางที่ไม่ชนจริง (Planted Feasible Coloring):**
       1. แบ่งรายวิชาออกเป็น $2D$ กลุ่มล่วงหน้า (สมมติว่าเป็นคำตอบที่ซ่อนไว้ 1 แบบ)
       2. ตอนสุ่มให้นักศึกษาแต่ละคนลงทะเบียน 2–3 วิชา ให้สุ่มเลือกวิชาที่อยู่ **คนละกลุ่มช่วงสอบ** (เพื่อให้มั่นใจ 100% ว่ามีตารางสอบที่ `hard_conflict_count == 0` อย่างน้อย 1 แบบเสมอ!)
-      3. บันทึกทั้งลงใน `backend/scripts/sample_instances.json` และสั่ง Upsert เข้า MongoDB ผ่าน `seed_db.py`
+      3. สั่ง Upsert เข้า MongoDB ผ่าน `seed_db.py` หรือปุ่มบน UI (ไม่มีการใช้ mock static json file)
 
 ---
 
@@ -90,7 +90,7 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
    - สำหรับแต่ละวิชา หา `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`
    - เลือก slot ที่ทำให้ `graph.calculate_delta_penalty(course_id, slot_id, partial_schedule)` มีค่าน้อยที่สุด (หากเท่ากันให้เลือก slot แรกสุดตามลำดับ)
    - คืนค่าผ่าน `build_solve_response(...)` โดยไม่มีข้อความ `[STUB]`
-2. แก้ไขไฟล์ @backend/scripts/seed_db.py (และอัปเดต @backend/scripts/sample_instances.json) เพื่อสร้างชุดข้อมูลจำลอง 3 ระดับความยาก (`easy_01`, `medium_01`, `hard_01`) เพิ่มเติมจาก `demo_01`:
+2. แก้ไขไฟล์ @backend/scripts/seed_db.py เพื่อสร้างชุดข้อมูลจำลอง 3 ระดับความยาก (`easy_01`, `medium_01`, `hard_01`) เพิ่มเติมจาก `demo_01`:
    - ใช้เทคนิค Planted Feasible Assignment ตอนสุ่มนักศึกษาลงทะเบียน เพื่อให้รับประกันว่าทุกชุดข้อมูลมีคำตอบที่ `hard_conflict_count == 0` จริง
    - ตรวจสอบความถูกต้องของทุกชุดข้อมูลด้วย `validate_problem_input` และทดสอบรัน `solve_greedy` กับทุกชุดข้อมูลก่อนบันทึกเข้า MongoDB
 ```

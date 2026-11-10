@@ -1,17 +1,16 @@
 """
 MongoDB Database Access Layer for ExamAnt.
 Stores and retrieves `ExamInstanceDocument` records from the `exam_instances` collection.
-Includes a graceful fallback to `scripts/sample_instances.json` if MongoDB is temporarily offline.
+Strictly relies on the running MongoDB instance (no static mock JSON fallback).
 """
 
-import json
 import logging
 from typing import List, Optional
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.errors import PyMongoError
 
-from app.config import AUTO_SEED_DEMO, MONGO_DB_NAME, MONGO_URI, SAMPLE_DATA_PATH
+from app.config import AUTO_SEED_DEMO, MONGO_DB_NAME, MONGO_URI
 from app.schemas.models import ExamInstanceDocument, ExamInstanceSummary
 
 logger = logging.getLogger(__name__)
@@ -20,64 +19,65 @@ _mongo_client: Optional[MongoClient] = None
 
 
 def get_collection() -> Optional[Collection]:
-    """Return the `exam_instances` MongoDB collection, or None if unreachable."""
+    """
+    Return the `exam_instances` MongoDB collection, or None if unreachable.
+    Logs clear instructions if MongoDB is offline.
+    """
     global _mongo_client
     try:
         if _mongo_client is None:
             _mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        # Ping server to verify connection
+        # Ping server to verify active connection
         _mongo_client.admin.command("ping")
         db = _mongo_client[MONGO_DB_NAME]
         collection = db["exam_instances"]
         collection.create_index("instance_id", unique=True)
         return collection
     except PyMongoError as exc:
-        logger.warning("MongoDB connection unavailable (%s). Using JSON fallback.", exc)
+        logger.error(
+            "MongoDB is not reachable at %s (%s). "
+            "Please ensure MongoDB container is started via 'docker compose up -d mongodb'.",
+            MONGO_URI,
+            exc,
+        )
         return None
-
-
-def load_sample_instances_from_json() -> List[ExamInstanceDocument]:
-    """Load fallback/starter instances from `scripts/sample_instances.json`."""
-    if not SAMPLE_DATA_PATH.exists():
-        return []
-    with open(SAMPLE_DATA_PATH, "r", encoding="utf-8") as f:
-        raw_list = json.load(f)
-    return [ExamInstanceDocument(**item) for item in raw_list]
 
 
 def ensure_initial_seed() -> int:
     """
-    If `AUTO_SEED_DEMO` is enabled and `exam_instances` collection is empty,
-    automatically seed the starter instances from `scripts/sample_instances.json`.
+    If `AUTO_SEED_DEMO` is enabled and MongoDB `exam_instances` collection is empty,
+    automatically seeds programmatic datasets by invoking `seed_all_instances()`.
     """
     if not AUTO_SEED_DEMO:
         return 0
+
     collection = get_collection()
     if collection is None:
+        logger.warning(
+            "Cannot auto-seed: MongoDB is unavailable. "
+            "Start the container with 'docker compose up -d mongodb' and run 'python -m scripts.seed_db'."
+        )
         return 0
+
     if collection.count_documents({}) == 0:
-        samples = load_sample_instances_from_json()
-        for inst in samples:
-            collection.update_one(
-                {"instance_id": inst.instance_id},
-                {"$set": inst.model_dump()},
-                upsert=True,
-            )
-        logger.info("Auto-seeded %d starter instance(s) into MongoDB.", len(samples))
-        return len(samples)
+        logger.info("Database is empty. Triggering programmatic seed into MongoDB...")
+        from scripts.seed_db import seed_all_instances
+
+        count = seed_all_instances()
+        logger.info("Auto-seeded %d dataset instance(s) into MongoDB.", count)
+        return count
+
     return 0
 
 
 def list_all_instances() -> List[ExamInstanceSummary]:
-    """Return summary metadata for all available dataset instances."""
+    """Return summary metadata for all available dataset instances in MongoDB."""
     collection = get_collection()
-    docs: List[ExamInstanceDocument] = []
+    if collection is None:
+        return []
 
-    if collection is not None:
-        cursor = collection.find({}, {"_id": 0}).sort("instance_id", 1)
-        docs = [ExamInstanceDocument(**doc) for doc in cursor]
-    else:
-        docs = load_sample_instances_from_json()
+    cursor = collection.find({}, {"_id": 0}).sort("instance_id", 1)
+    docs = [ExamInstanceDocument(**doc) for doc in cursor]
 
     summaries: List[ExamInstanceSummary] = []
     for d in docs:
@@ -99,17 +99,14 @@ def list_all_instances() -> List[ExamInstanceSummary]:
 
 
 def get_instance_by_id(instance_id: str) -> Optional[ExamInstanceDocument]:
-    """Fetch a single `ExamInstanceDocument` by `instance_id`."""
+    """Fetch a single `ExamInstanceDocument` from MongoDB by `instance_id`."""
     collection = get_collection()
-    if collection is not None:
-        raw = collection.find_one({"instance_id": instance_id}, {"_id": 0})
-        if raw:
-            return ExamInstanceDocument(**raw)
+    if collection is None:
+        return None
 
-    # Fallback to local JSON if not found or DB offline
-    for inst in load_sample_instances_from_json():
-        if inst.instance_id == instance_id:
-            return inst
+    raw = collection.find_one({"instance_id": instance_id}, {"_id": 0})
+    if raw:
+        return ExamInstanceDocument(**raw)
     return None
 
 
@@ -118,6 +115,7 @@ def upsert_instance(instance: ExamInstanceDocument) -> bool:
     collection = get_collection()
     if collection is None:
         return False
+
     collection.update_one(
         {"instance_id": instance.instance_id},
         {"$set": instance.model_dump()},

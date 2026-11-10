@@ -32,8 +32,7 @@ backend/
 │       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph
 │       └── solver.py            # POST /solve, POST /compare
 └── scripts/
-    ├── sample_instances.json    # Starter dataset (demo_01)
-    └── seed_db.py               # [Person 2: Fai] Dataset generator & MongoDB seeder script
+    └── seed_db.py               # [Person 2: Fai] Programmatic dataset generator & MongoDB seeder script
 ```
 
 ---
