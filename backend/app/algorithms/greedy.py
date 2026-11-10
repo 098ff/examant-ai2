@@ -21,15 +21,17 @@ from app.schemas.models import AlgorithmParameters, ProblemData, SolveResponse
 
 
 def solve_greedy(problem: ProblemData, params: AlgorithmParameters) -> SolveResponse:
-    """Run Greedy examination timetabling baseline."""
+    """
+    Run deterministic Greedy examination timetabling baseline (Spec Section 7.1).
+
+    Courses are ordered by conflict degree descending (tie-broken by course_id).
+    Each course is sequentially assigned to the feasible exam slot that minimizes
+    the incremental consecutive-exam penalty (Delta P), tie-breaking by earlier
+    chronological slot order.
+    """
     start_time = time.perf_counter()
     graph = ConflictGraph(problem)
 
-    # ==========================================================================
-    # TODO [Person 2 - Fai]:
-    # Replace the stub code below with slot selection minimizing `calculate_delta_penalty`.
-    # (Currently, the stub selects the first feasible slot for early API testing)
-    # ==========================================================================
     partial_schedule: Optional[Dict[str, str]] = {}
     ordered_courses = graph.get_ordered_courses()
 
@@ -38,8 +40,17 @@ def solve_greedy(problem: ProblemData, params: AlgorithmParameters) -> SolveResp
         if not feasible_slots:
             partial_schedule = None
             break
-        # STUB: Select first available feasible slot (Person 2 should select slot minimizing delta_penalty)
-        partial_schedule[course_id] = feasible_slots[0]
+
+        # Select the feasible slot that minimizes incremental soft penalty (Delta P).
+        # Because feasible_slots is already ordered chronologically and min() is stable,
+        # ties are automatically broken by earlier chronological slot order.
+        best_slot = min(
+            feasible_slots,
+            key=lambda slot_id: graph.calculate_delta_penalty(
+                course_id, slot_id, partial_schedule
+            ),
+        )
+        partial_schedule[course_id] = best_slot
 
     runtime_ms = (time.perf_counter() - start_time) * 1000.0
     return build_solve_response(
@@ -51,5 +62,5 @@ def solve_greedy(problem: ProblemData, params: AlgorithmParameters) -> SolveResp
         parameters_used={"seed": params.seed},
         best_iteration=1 if partial_schedule else None,
         history=[],
-        message="[STUB] Greedy starter stub executed. (TODO: Person 2 implement min delta_penalty selection)",
+        message=None,
     )
