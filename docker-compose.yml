@@ -1,0 +1,54 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: examant-mongodb
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT:-27018}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-examant_db}
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: examant-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017}
+      MONGO_DB_NAME: ${MONGO_DB_NAME:-examant_db}
+      AUTO_SEED_DEMO: "true"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: examant-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8501}:8501"
+    environment:
+      BACKEND_API_URL: ${BACKEND_API_URL:-http://backend:8000}
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    command: streamlit run app.py --server.port=8501 --server.address=0.0.0.0 --server.runOnSave=true
+
+volumes:
+  mongo_data:
