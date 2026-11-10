@@ -18,7 +18,13 @@
 
 ## 1. Action Checklist for Rose
 
-The initial Streamlit web scaffold is already connected to the FastAPI backend. You can run `docker compose up --build` and open `http://localhost:8501` to view the live dashboard. The areas you can polish and extend for the 10-minute video presentation include:
+The initial Streamlit web scaffold is already connected to the FastAPI backend. You can run `docker compose up --build` and open `http://localhost:8501` to view the live dashboard.
+
+> **Code & UI Conventions:**
+> - All Python comments and docstrings in `frontend/` must be written in English without emojis.
+> - Use Streamlit Material Icons (`:material/<icon_name>:`) instead of raw Unicode emojis across UI labels, buttons, tabs, and alerts.
+
+The areas you can polish and extend for the 10-minute video presentation include:
 
 - [ ] **Task 1: Enhance the Timetable Grid (`frontend/components/schedule_grid.py`)**
   - Display the 2-slots-per-day schedule (Morning `slot_index=1` / Afternoon `slot_index=2`) with clean card formatting.
@@ -89,4 +95,5 @@ Tasks:
    - Add a side-by-side comparison view for the best schedules (`best_run_schedule`) of Greedy vs Random Feasible vs ACO.
    - Add a CSV download button for benchmark summary metrics.
    - Add an expandable "Key Findings & Analysis" section explaining when and why ACO achieves lower penalty scores than the baselines.
+3. Follow codebase conventions strictly: write all code comments/docstrings in English without emojis, and use Streamlit Material Icons (`:material/<icon_name>:`) instead of Unicode emojis in the UI.
 ```

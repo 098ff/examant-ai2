@@ -116,7 +116,7 @@ Let $T(c)$ be the assigned time slot of course $c$, and $C(a, b)$ be the count o
 | :--- | :---: | :--- |
 | Project Spec + Synthetic Dataset Generator & MongoDB Seeder | 4 | Person 2 (Fai) |
 | Central Validator + Greedy Baseline | 4 | Person 2 (Fai) |
-| Random Feasible + ACO Implementation | 6 | Person 1 (Maimai - Lead) |
+| Random Feasible + ACO Implementation | 6 | Person 1 (Mai) |
 | Multi-Seed Benchmarking + Streamlit Visualization & Charts | 5 | Person 3 (Rose) |
 | Video Script, Recording, and Final Presentation | 5 | All Members |
 | **Total** | **24** | |

@@ -4,7 +4,9 @@
 
 # ⚙️ แนวทางการพัฒนาฝั่ง Backend (Way of Work for Backend)
 
-เอกสารนี้เป็นคู่มือสำหรับทีมพัฒนา Backend (**ไมไม - คนที่ 1** และ **ฝ้าย - คนที่ 2**) อธิบายโครงสร้างโฟลเดอร์ `backend/`, สัญญา API, พารามิเตอร์ของแต่ละอัลกอริทึม และวิธีเรียกใช้โมดูลกลาง (`ConflictGraph` และ `Central Validator`) เพื่อให้ทั้ง 3 อัลกอริทึมทำงานร่วมกันได้อย่างไร้รอยต่อ
+เอกสารนี้เป็นคู่มือสำหรับทีมพัฒนา Backend (**ไม - คนที่ 1** และ **ฝ้าย - คนที่ 2**) อธิบายโครงสร้างโฟลเดอร์ `backend/`, สัญญา API, พารามิเตอร์ของแต่ละอัลกอริทึม และวิธีเรียกใช้โมดูลกลาง (`ConflictGraph` และ `Central Validator`) เพื่อให้ทั้ง 3 อัลกอริทึมทำงานร่วมกันได้อย่างไร้รอยต่อ
+
+> **ข้อตกลงด้านการเขียนโค้ด (Code Style Convention):** คอมเมนต์และ Docstring ทั้งหมดในโค้ด `backend/` เขียนเป็นภาษาอังกฤษและไม่มีการใช้อีโมจิ (Emoji)
 
 ---
 
@@ -17,7 +19,7 @@ backend/
 ├── app/
 │   ├── main.py                  # FastAPI App Entrypoint & Lifespan Auto-Seed
 │   ├── config.py                # โหลดค่า MONGO_URI, MONGO_DB_NAME
-│   ├── database.py              # ฟังก์ชันอ่าน/เขียน MongoDB Collection `exam_instances`
+│   ├── database.py              # ฟังก์ชันอ่าน/เขียน MongoDB Collection `exam_instances` (Strict MongoDB)
 │   ├── schemas/
 │   │   └── models.py            # Pydantic Schemas กลางของทั้งระบบ (ห้ามแก้ชื่อฟิลด์หลักโดยไม่แจ้งทีม)
 │   ├── core/
@@ -25,14 +27,14 @@ backend/
 │   │   └── validator.py         # [ส่วนกลาง] ตัวตรวจคำตอบกลาง validate_and_score_schedule()
 │   ├── algorithms/
 │   │   ├── base.py              # [ส่วนกลาง] ฟังก์ชัน build_solve_response() แปลงผลลัพธ์ส่งกลับตาม Schema
-│   │   ├── greedy.py            # 👩‍💻 [งานฝ้าย - คนที่ 2] อัลกอริทึม Greedy Baseline
-│   │   ├── random_feasible.py   # 👩‍💻 [งานไมไม - คนที่ 1] อัลกอริทึม Random Feasible Baseline
-│   │   └── aco.py               # 👩‍💻 [งานไมไม - คนที่ 1] อัลกอริทึม Ant Colony Optimization (ACO)
+│   │   ├── greedy.py            # [งานฝ้าย - คนที่ 2] อัลกอริทึม Greedy Baseline
+│   │   ├── random_feasible.py   # [งานไม - คนที่ 1] อัลกอริทึม Random Feasible Baseline
+│   │   └── aco.py               # [งานไม - คนที่ 1] อัลกอริทึม Ant Colony Optimization (ACO)
 │   └── routers/
-│       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph
+│       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph, POST /instances/seed
 │       └── solver.py            # POST /solve, POST /compare
 └── scripts/
-    └── seed_db.py               # 👩‍💻 [งานฝ้าย - คนที่ 2] สคริปต์สร้าง Dataset จำลองแบบ Programmatic และ Seed ลง MongoDB
+    └── seed_db.py               # [งานฝ้าย - คนที่ 2] สคริปต์สร้าง Dataset จำลองแบบ Programmatic และ Seed ลง MongoDB
 ```
 
 ---
@@ -84,7 +86,7 @@ return build_solve_response(
 [
   {
     "instance_id": "demo_01",
-    "name": "Demo 01 — ชุดข้อมูลสาธิตขนาดเล็ก (10 วิชา, 3 วัน / 6 ช่วงสอบ)",
+    "name": "Demo 01 — Small Benchmark Dataset (10 Courses, 3 Days / 6 Slots)",
     "seed": 42,
     "description": "...",
     "num_courses": 10,
@@ -96,9 +98,10 @@ return build_solve_response(
 ]
 ```
 
-### 3.2 `GET /instances/{instance_id}` และ `GET /instances/{instance_id}/graph`
+### 3.2 `GET /instances/{instance_id}`, `GET /instances/{instance_id}/graph` และ `POST /instances/seed`
 - `GET /instances/{instance_id}`: คืนข้อมูลครบทุกฟิลด์ของชุดปัญหานั้น (`courses`, `students`, `enrollments`, `slots`)
 - `GET /instances/{instance_id}/graph`: คืน `nodes` (พร้อม `degree` และ `student_count`) และ `edges` (`source`, `target`, `shared_students`) สำหรับให้ Frontend วาดกราฟความขัดแย้งทันที
+- `POST /instances/seed`: สั่งรันสคริปต์ Seed ชุดข้อมูลจำลองลง MongoDB (`scripts.seed_db.seed_all_instances()`)
 
 ### 3.3 `POST /solve`
 รันอัลกอริทึม 1 วิธีบนชุดข้อมูลที่เลือก:

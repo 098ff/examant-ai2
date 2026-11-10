@@ -18,7 +18,7 @@
 
 | สมาชิก | บทบาทหลัก | ไฟล์หลักที่รับผิดชอบ | Branch ที่ได้รับมอบหมาย | เอกสารคู่มือเฉพาะตัว |
 | :--- | :--- | :--- | :--- | :--- |
-| **6630333721 Sippapas Chavanont (Mai)** | กำหนดสเปกกลาง, พัฒนาอัลกอริทึม **ACO** และ **Random Feasible**, ตรวจสอบความถูกต้องของผลลัพธ์ `/solve` และ `/compare` | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-maimai-lead-aco.th.md](01-task-maimai-lead-aco.th.md) |
+| **6630333721 Sippapas Chavanont (Mai)** | กำหนดสเปกกลาง, พัฒนาอัลกอริทึม **ACO** และ **Random Feasible**, ตรวจสอบความถูกต้องของผลลัพธ์ `/solve` และ `/compare` | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-mai-aco.th.md](01-task-mai-aco.th.md) |
 | **6631305321 Chanatda Konchom (Fai)** | Setup Repository & Docker, ออกแบบและสร้าง **Dataset Generator (3 ระดับความยาก)** + **MongoDB Seeder**, พัฒนาอัลกอริทึม **Greedy** | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.th.md](02-task-fai-db-greedy.th.md) |
 | **6632213421 Sasarose Buranapin (Rose)** | พัฒนาหน้าเว็บ **Streamlit Frontend**, ตกแต่งตารางสอบสี 2 ช่วง/วัน, กราฟเปรียบเทียบผล 3 อัลกอริทึม และรันการทดลองสรุปผลสำหรับวิดีโอ 10 นาที | - `frontend/app.py`<br>- `frontend/components/sidebar.py`<br>- `frontend/components/schedule_grid.py`<br>- `frontend/components/charts.py` | `feat/streamlit-frontend-viz` | 👉 [03-task-rose-frontend.th.md](03-task-rose-frontend.th.md) |
 
@@ -63,9 +63,9 @@
 ## 3. ทำไมทั้ง 3 คนถึงเริ่มทำพร้อมกันได้ทันทีโดยไม่ต้องรอกัน?
 
 ในการ Setup Repository รอบนี้ เราได้เตรียม **"โครงสร้างเชื่อมกลาง (Shared Glue & Starter Stubs)"** ไว้ให้แล้ว:
-1. **มีข้อมูลตัวอย่าง `demo_01` พร้อมใช้งานทันที:** ไมไมและโรสสามารถรันทดสอบโค้ดของตัวเองกับ `demo_01` ได้ตั้งแต่วันแรก ในระหว่างที่ฝ้ายกำลังสร้างชุดข้อมูล `easy_01`, `medium_01`, `hard_01` เพิ่มเติม
-2. **มีโมดูลกลาง `ConflictGraph` และ `Central Validator` (`backend/app/core/`):** ทั้งฝ้าย (Greedy) และไมไม (Random Feasible & ACO) เรียกใช้ฟังก์ชันเช็กการชน (`get_feasible_slots`) และคำนวณคะแนนสอบติดกัน (`calculate_delta_penalty`) จากที่เดียวกัน จึงมั่นใจได้ว่ากติกาของทั้ง 3 อัลกอริทึมตรงกัน 100%
-3. **มี API Stub ที่คืนค่าตามจริงทุกฟิลด์:** โรสสามารถรัน `docker compose up` แล้วเขียนหน้า Streamlit ดึงข้อมูลจาก `/instances`, `/solve`, `/compare` ได้ทันทีโดยไม่ต้องรอให้ไมไมและฝ้ายเขียนอัลกอริทึมเสร็จสมบูรณ์ก่อน
+1. **มีข้อมูลตัวอย่าง `demo_01` พร้อมใช้งานทันที:** ไมและโรสสามารถรันทดสอบโค้ดของตัวเองกับ `demo_01` ได้ตั้งแต่วันแรก ในระหว่างที่ฝ้ายกำลังสร้างชุดข้อมูล `easy_01`, `medium_01`, `hard_01` เพิ่มเติม
+2. **มีโมดูลกลาง `ConflictGraph` และ `Central Validator` (`backend/app/core/`):** ทั้งฝ้าย (Greedy) และไม (Random Feasible & ACO) เรียกใช้ฟังก์ชันเช็กการชน (`get_feasible_slots`) และคำนวณคะแนนสอบติดกัน (`calculate_delta_penalty`) จากที่เดียวกัน จึงมั่นใจได้ว่ากติกาของทั้ง 3 อัลกอริทึมตรงกัน 100%
+3. **มี API Stub ที่คืนค่าตามจริงทุกฟิลด์:** โรสสามารถรัน `docker compose up` แล้วเขียนหน้า Streamlit ดึงข้อมูลจาก `/instances`, `/solve`, `/compare` ได้ทันทีโดยไม่ต้องรอให้ไมและฝ้ายเขียนอัลกอริทึมเสร็จสมบูรณ์ก่อน
 
 ---
 
@@ -79,5 +79,5 @@ flowchart LR
 
 ### Checklist ก่อนอัดวิดีโอนำเสนอ 10 นาที
 - [ ] **ฝ้าย:** มีชุดข้อมูลอย่างน้อย 3 ชุดใน MongoDB (`easy_01`, `medium_01`, `hard_01` หรือ `demo_01..03`) ที่ยืนยันแล้วว่าจัดตารางไม่ชนได้จริง และอัลกอริทึม Greedy เลือกช่วงสอบที่เพิ่ม Penalty น้อยที่สุดแล้ว
-- [ ] **ไมไม:** อัลกอริทึม Random Feasible และ ACO ทำงานครบตามสมการใน `AI2 Slide.pdf` และส่งข้อมูล `history` ราย Iteration กลับไปให้กราฟ Convergence ได้จริง
+- [ ] **ไม:** อัลกอริทึม Random Feasible และ ACO ทำงานครบตามสมการใน `AI2 Slide.pdf` และส่งข้อมูล `history` ราย Iteration กลับไปให้กราฟ Convergence ได้จริง
 - [ ] **โรส:** หน้าเว็บ Streamlit แสดงตารางสอบสี, รายชื่อนักศึกษาที่สอบติดกัน, กราฟ Convergence และตารางสรุปผลเปรียบเทียบทั้ง 3 วิธีพร้อมใช้อัดวิดีโอ

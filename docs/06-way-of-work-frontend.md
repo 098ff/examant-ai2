@@ -22,8 +22,10 @@ frontend/
     └── charts.py                 # Conflict Graph, Convergence Curve, & Benchmark plots
 ```
 
-> **💡 Modular Design Benefit:**  
-> Rose can customize the timetable visual styling in `components/schedule_grid.py` or tweak Plotly graphs in `components/charts.py` without worrying about API URLs or data parsing, as `api_client.py` handles backend interactions cleanly.
+> **💡 Modular Design & Code Conventions:**  
+> - Rose can customize the timetable visual styling in `components/schedule_grid.py` or tweak Plotly graphs in `components/charts.py` without worrying about API URLs or data parsing, as `api_client.py` handles backend interactions cleanly.
+> - **UI Icons:** Use Google Material Icons natively supported by Streamlit (`:material/<icon_name>:`, e.g., `:material/pest_control:`, `:material/play_arrow:`, `:material/rocket_launch:`) instead of raw Unicode emojis.
+> - **Code Comments:** All Python comments and docstrings in `frontend/` must be written in English without emojis.
 
 ---
 
@@ -51,26 +53,28 @@ In `frontend/components/sidebar.py`, controls must adhere to the parameters defi
 
 ## 3. UI Structure & Demo Tabs (10-Minute Video Storyline)
 
-To facilitate presentation delivery as outlined in `docs/00-idea-proposal.md`, `frontend/app.py` is organized into 3 tabs:
+To facilitate presentation delivery as outlined in `docs/00-idea-proposal.md`, `frontend/app.py` is organized into 3 tabs using Streamlit Material Icons:
 
-### Tab 1: 📚 Dataset & Conflict Graph Explorer
+### Tab 1: `:material/menu_book:` Dataset & Conflict Graph Explorer
 - **Content:**
   - Metric cards: total courses, students, enrollments, and exam days.
   - **Interactive Course Conflict Graph:** Plotly NetworkX graph depicting courses as nodes and student overlap as edges. Darker colors denote higher conflict degrees.
 - **Demo Goal:** Explains why examination timetabling maps to Graph Coloring.
 
-### Tab 2: 🧪 Single Algorithm Run
-- **Controls:** Algorithm radio selector (`ACO`, `Random Feasible`, `Greedy`) and **`▶️ Solve Timetable`** button.
+### Tab 2: `:material/science:` Single Algorithm Run
+- **Controls:**
+  - Algorithm radio selector (`:material/pest_control: Ant Colony Optimization (ACO)`, `:material/casino: Random Feasible`, `:material/bolt: Greedy Baseline`)
+  - **`รันจัดตารางสอบ (Solve)`** button (`icon=":material/play_arrow:"`)
 - **Results:**
   1. **5 KPI Cards:** Status, Hard Conflicts, Penalty Score ($P$), Attempts, Runtime.
-  2. **Colored Timetable Grid:** Shows courses placed into morning and afternoon slots for each day.
-  3. **Consecutive Exam Student Inspector:** Expandable list of students with morning and afternoon exams on the same day (`validation_details.consecutive_cases`).
+  2. **Colored Timetable Grid (`:material/calendar_month:`):** Shows courses placed into morning (`ช่วงเช้า (Slot 1: Morning)`) and afternoon (`ช่วงบ่าย (Slot 2: Afternoon)`) slots for each day.
+  3. **Consecutive Exam Student Inspector (`:material/search:`):** Expandable list of students with morning and afternoon exams on the same day (`validation_details.consecutive_cases`), or a `:material/celebration:` banner when Penalty = 0.
   4. **ACO Convergence Curve:** Plots best-so-far penalty $P$ across iterations.
 
-### Tab 3: 🏆 Multi-Algorithm Comparison
-- **Controls:** **`🚀 Run Benchmark`** button (`POST /compare`).
+### Tab 3: `:material/leaderboard:` Multi-Algorithm Comparison
+- **Controls:** **`เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)`** button (`icon=":material/rocket_launch:"`, `POST /compare`).
 - **Results:**
-  1. **Summary Table:** Compares Success Rate, Best/Mean/Median/Std Penalty, and Mean Runtime for Greedy, Random Feasible, and ACO.
+  1. **Summary Table (`:material/bar_chart:`):** Compares Success Rate, Best/Mean/Median/Std Penalty, and Mean Runtime for Greedy, Random Feasible, and ACO.
   2. **Bar Chart:** Visualizes Best vs. Mean Penalty across all three methods.
   3. **Box Plot:** Displays penalty distribution over all seeds to evaluate stability.
   4. **Export Options:** Download results as CSV for slides and report writing.

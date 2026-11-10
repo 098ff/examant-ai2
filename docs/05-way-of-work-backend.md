@@ -4,7 +4,9 @@
 
 # ⚙️ Backend Development Guidelines (Way of Work for Backend)
 
-This guide is designed for the backend engineering team (**Person 1: Maimai** and **Person 2: Fai**). It covers the `backend/` directory structure, API contracts, parameters, and how to utilize the central modules (`ConflictGraph` and `Central Validator`) so that all 3 algorithms integrate seamlessly.
+This guide is designed for the backend engineering team (**Person 1: Mai** and **Person 2: Fai**). It covers the `backend/` directory structure, API contracts, parameters, and how to utilize the central modules (`ConflictGraph` and `Central Validator`) so that all 3 algorithms integrate seamlessly.
+
+> **Code Style Convention:** All Python code comments and docstrings across `backend/` are written in English without emojis.
 
 ---
 
@@ -17,7 +19,7 @@ backend/
 ├── app/
 │   ├── main.py                  # FastAPI App Entrypoint & Lifespan Auto-Seed
 │   ├── config.py                # Environment variable loader (MONGO_URI, MONGO_DB_NAME)
-│   ├── database.py              # MongoDB access layer with local JSON fallback
+│   ├── database.py              # Strict MongoDB access layer for `exam_instances` collection
 │   ├── schemas/
 │   │   └── models.py            # Central Pydantic schemas (frozen contract)
 │   ├── core/
@@ -26,10 +28,10 @@ backend/
 │   ├── algorithms/
 │   │   ├── base.py              # [Shared] build_solve_response helper
 │   │   ├── greedy.py            # [Person 2: Fai] Greedy baseline implementation
-│   │   ├── random_feasible.py   # [Person 1: Maimai] Random Feasible implementation
-│   │   └── aco.py               # [Person 1: Maimai] Ant Colony Optimization implementation
+│   │   ├── random_feasible.py   # [Person 1: Mai] Random Feasible implementation
+│   │   └── aco.py               # [Person 1: Mai] Ant Colony Optimization implementation
 │   └── routers/
-│       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph
+│       ├── instances.py         # GET /instances, GET /instances/{id}, GET /instances/{id}/graph, POST /instances/seed
 │       └── solver.py            # POST /solve, POST /compare
 └── scripts/
     └── seed_db.py               # [Person 2: Fai] Programmatic dataset generator & MongoDB seeder script
@@ -96,9 +98,10 @@ Returns a summary of all problem instances stored in MongoDB:
 ]
 ```
 
-### 3.2 `GET /instances/{instance_id}` & `GET /instances/{instance_id}/graph`
+### 3.2 `GET /instances/{instance_id}`, `GET /instances/{instance_id}/graph` & `POST /instances/seed`
 - `GET /instances/{instance_id}`: Full problem instance data (`courses`, `students`, `enrollments`, `slots`).
 - `GET /instances/{instance_id}/graph`: Precomputed graph payload with `nodes` (degrees, enrollments) and `edges` (shared students) for frontend visualization.
+- `POST /instances/seed`: Triggers programmatic dataset seeding/re-seeding into MongoDB via `scripts.seed_db.seed_all_instances()`.
 
 ### 3.3 `POST /solve`
 Executes a single algorithm run on a dataset instance:

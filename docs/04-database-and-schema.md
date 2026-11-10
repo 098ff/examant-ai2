@@ -130,4 +130,4 @@ Solvers (`greedy.py`, `random_feasible.py`, `aco.py`) do not connect directly to
    curl -X POST http://localhost:8000/instances/seed
    ```
 3. **Frontend UI Seeding:**
-   On the Streamlit dashboard, click the **"🌱 Seed Database"** button to populate or refresh datasets.
+   On the Streamlit dashboard, click the **"Seed Database ตอนนี้"** / **"Seed Database"** button (`:material/database:`) when the database is empty, or use **"Re-seed Datasets เข้า MongoDB"** (`:material/refresh:`) inside the Sidebar's **Database Tools** (`:material/build:`) expander to populate or refresh datasets.

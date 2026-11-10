@@ -18,13 +18,13 @@
 
 - [x] **Task 1: Setup Repository, Docker Compose & MongoDB Connection** *(Completed in initial scaffolding)*
 - [ ] **Task 2: Implement `Greedy` Baseline in `backend/app/algorithms/greedy.py`**
-  - Replace the `# TODO [คนที่ 2 - ฝ้าย]` stub with the full Greedy logic as specified in `docs/01-project-idea-spec.md` (Section 7.1):
+  - Replace the `# TODO [Person 2 - Fai]:` stub (and remove the `[STUB]` response message) with the full Greedy logic as specified in `docs/01-project-idea-spec.md` (Section 7.1):
     1. Sort courses by conflict degree descending: `ordered_courses = graph.get_ordered_courses()`.
     2. For each course, fetch non-conflicting time slots: `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`.
     3. If `feasible_slots` is empty, return `no_solution_found` (`partial_schedule = None`).
     4. Otherwise, compute `delta_p = graph.calculate_delta_penalty(course_id, slot_id, partial_schedule)` for each candidate slot and pick the slot with **minimum $\Delta P$** (tie-break by slot chronological order).
 - [ ] **Task 3: Create Synthetic Dataset Generator (3 Difficulty Levels) & Seed MongoDB in `backend/scripts/seed_db.py`**
-  - Following `docs/00-idea-proposal.md` (Section 4) and `docs/01-project-idea-spec.md` (Section 3):
+  - Locate `TODO [Person 2 - Fai]:` inside `get_all_seed_instances()` in `backend/scripts/seed_db.py` and implement dataset generation following `docs/00-idea-proposal.md` (Section 4) and `docs/01-project-idea-spec.md` (Section 3):
     - Generate at least 3 benchmark datasets:
       1. `easy_01` (or `demo_01`): ~10 courses, 40–50 students, 3 days (6 slots: morning & afternoon).
       2. `medium_01`: ~12 courses, 60–80 students, 3 days (6 slots) with higher enrollment density.
@@ -85,12 +85,13 @@ Before writing code, review these files in order:
 4. @backend/app/algorithms/greedy.py and @backend/scripts/seed_db.py
 
 Tasks:
-1. In @backend/app/algorithms/greedy.py, complete the Greedy baseline algorithm according to Spec 7.1:
+1. In @backend/app/algorithms/greedy.py, replace the `# TODO [Person 2 - Fai]:` stub to complete the Greedy baseline algorithm according to Spec 7.1:
    - Order courses via `graph.get_ordered_courses()`.
    - For each course, fetch `feasible_slots = graph.get_feasible_slots(...)`.
    - Select the slot that minimizes `graph.calculate_delta_penalty(...)` (tie-break by slot order).
-   - Return clean result via `build_solve_response(...)`.
-2. In @backend/scripts/seed_db.py, generate 3 synthetic benchmark instances (`easy_01`, `medium_01`, `hard_01`) in addition to `demo_01`:
+   - Return clean result via `build_solve_response(...)` (with `message=None`).
+2. In @backend/scripts/seed_db.py (at `TODO [Person 2 - Fai]:` in `get_all_seed_instances()`), generate 3 synthetic benchmark instances (`easy_01`, `medium_01`, `hard_01`) in addition to `demo_01`:
    - Use the Planted Feasible Assignment technique during enrollment generation so every dataset is mathematically proven to have a zero-conflict solution.
    - Validate each dataset with `validate_problem_input` and test run `solve_greedy` before upserting into MongoDB.
+3. Write all code comments and docstrings in clear English without emojis.
 ```

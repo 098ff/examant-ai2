@@ -116,8 +116,8 @@ ExamAnt เป็นโครงการทดลองใช้ Ant Colony Opt
 |---|---|---|
 | `slot_id` | string | รหัสไม่ซ้ำ เช่น `D1_S1` |
 | `day_index` | integer | ลำดับวัน เริ่มที่ 1 |
-| `slot_index` | integer enum: 1, 2 | 1 = เช้า, 2 = บ่าย เท่านั้น |
-| `label` | string | ชื่อแสดงผล เช่น `วันที่ 1 ช่วงเช้า` |
+| `slot_index` | integer enum: 1, 2 | 1 = เช้า (Morning), 2 = บ่าย (Afternoon) เท่านั้น |
+| `label` | string | ชื่อแสดงผล เช่น `Day 1 Morning` |
 
 คู่ (`day_index`, `slot_index`) ต้องไม่ซ้ำ แต่ละวันต้องมีสอง records ได้แก่ช่วงเช้าและบ่าย หากมี D วันจะมีทั้งหมด 2D slots ตัวสร้าง dataset ต้องสร้างโครงสร้างนี้เสมอ และ frontend แสดงสองช่วงต่อวัน ห้ามสร้างช่วงที่สามหรือเพิ่ม slot ซ้ำเพื่อแทนห้องสอบ
 
@@ -138,8 +138,8 @@ ExamAnt เป็นโครงการทดลองใช้ Ant Colony Opt
     {"student_id": "S002", "course_id": "C03"}
   ],
   "slots": [
-    {"slot_id": "D1_S1", "day_index": 1, "slot_index": 1, "label": "วันที่ 1 ช่วงเช้า"},
-    {"slot_id": "D1_S2", "day_index": 1, "slot_index": 2, "label": "วันที่ 1 ช่วงบ่าย"}
+    {"slot_id": "D1_S1", "day_index": 1, "slot_index": 1, "label": "Day 1 Morning"},
+    {"slot_id": "D1_S2", "day_index": 1, "slot_index": 2, "label": "Day 1 Afternoon"}
   ]
 }
 ```
@@ -289,8 +289,10 @@ ACO สร้างตารางหนึ่งชุดต่อมดหน�
 |---|---|---|
 | `GET` | `/instances` | แสดงรายการ dataset ที่มี |
 | `GET` | `/instances/{instance_id}` | อ่านรายละเอียด instance |
+| `GET` | `/instances/{instance_id}/graph` | ดึงข้อมูลกราฟความขัดแย้งที่คำนวณไว้ล่วงหน้า |
 | `POST` | `/solve` | รัน algorithm หนึ่งวิธีตาม request มาตรฐาน |
 | `POST` | `/compare` | รันหลาย algorithm บน instance/seed เดียวกัน แล้วคืนผลรวม |
+| `POST` | `/instances/seed` | สั่งรันสคริปต์ Seed ชุดข้อมูลลง MongoDB |
 
 `/solve` รับ `instance_id`, `algorithm` (`greedy`, `random_feasible`, `aco`) และ `parameters` ที่ตรงกับตารางในหัวข้อ 5
 

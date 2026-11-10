@@ -22,8 +22,10 @@ frontend/
     └── charts.py                 # กราฟ Conflict Graph, Convergence Curve และกราฟเปรียบเทียบ 3 วิธี
 ```
 
-> **💡 จุดเด่นของการแยกไฟล์แบบนี้:**  
-> โรสสามารถแก้ไขความสวยงามของตารางสอบใน `components/schedule_grid.py` หรือตกแต่งกราฟใน `components/charts.py` ได้อย่างอิสระ โดยไม่ต้องกังวลเรื่อง URL ของ Backend เพราะ `api_client.py` จัดการเชื่อมต่อให้เรียบร้อยแล้ว
+> **💡 จุดเด่นของการแยกไฟล์และข้อตกลงการเขียนโค้ด (Code & Icon Conventions):**  
+> - โรสสามารถแก้ไขความสวยงามของตารางสอบใน `components/schedule_grid.py` หรือตกแต่งกราฟใน `components/charts.py` ได้อย่างอิสระ โดยไม่ต้องกังวลเรื่อง URL ของ Backend เพราะ `api_client.py` จัดการเชื่อมต่อให้เรียบร้อยแล้ว
+> - **การใช้ไอคอนบน UI:** ใช้ Google Material Icons ของ Streamlit (`:material/<icon_name>:` เช่น `:material/pest_control:`, `:material/play_arrow:`, `:material/rocket_launch:`) แทนการใช้อีโมจิ (Emoji) โดยตรงในโค้ด
+> - **การเขียนคอมเมนต์ในโค้ด:** คอมเมนต์และ Docstring ทั้งหมดใน `frontend/` เขียนเป็นภาษาอังกฤษและไม่มีอีโมจิ
 
 ---
 
@@ -52,29 +54,29 @@ frontend/
 
 ## 3. โครงสร้างหน้าจอและปุ่มกดสำหรับการนำเสนอ (3 Tabs สำหรับเล่าเรื่องในวิดีโอ 10 นาที)
 
-เพื่อให้สอดคล้องกับแนวทางการเล่าเรื่องใน `docs/00-idea-proposal.md` (หัวข้อ 8) หน้าเว็บใน `frontend/app.py` จึงแบ่งเป็น 3 แท็บหลัก:
+เพื่อให้สอดคล้องกับแนวทางการเล่าเรื่องใน `docs/00-idea-proposal.md` (หัวข้อ 8) หน้าเว็บใน `frontend/app.py` จึงแบ่งเป็น 3 แท็บหลักโดยใช้ Material Icons:
 
-### แท็บที่ 1: 📚 ข้อมูลรายวิชา & กราฟความขัดแย้ง (Dataset & Conflict Graph)
+### แท็บที่ 1: `:material/menu_book:` ข้อมูลรายวิชา & กราฟความขัดแย้ง (Dataset & Conflict Graph)
 - **สิ่งที่แสดง:**
   - การ์ดสรุปจำนวนวิชา, จำนวนนักศึกษา, จำนวนการลงทะเบียน และจำนวนวันสอบ
   - **กราฟความขัดแย้งของรายวิชา (Course Conflict Graph):** ดึงข้อมูลจาก `GET /instances/{instance_id}/graph` แสดงจุด (Node) เป็นรายวิชา และเส้นเชื่อม (Edge) เมื่อมีนักศึกษาลงเรียนร่วมกัน (ยิ่งชนหลายวิชายิ่งสีเข้ม)
 - **จุดประสงค์ตอนอัดวิดีโอ:** ใช้เปิดเรื่องเพื่ออธิบายว่าทำไมโจทย์จัดตารางสอบจึงแปลงเป็นปัญหา **Graph Coloring** ได้
 
-### แท็บที่ 2: 🧪 ทดลองรันเดี่ยว (Single Algorithm Run)
+### แท็บที่ 2: `:material/science:` ทดลองรันเดี่ยว (Single Algorithm Run)
 - **ปุ่มกดสำคัญ:**
-  - ปุ่มเลือกวิธี (`🐜 ACO`, `🎲 Random Feasible`, `⚡ Greedy`)
-  - ปุ่ม **`▶️ รันจัดตารางสอบ (Solve)`** ซึ่งยิงไปที่ `POST /solve`
+  - ปุ่มเลือกวิธี (`:material/pest_control: Ant Colony Optimization (ACO)`, `:material/casino: Random Feasible`, `:material/bolt: Greedy Baseline`)
+  - ปุ่ม **`รันจัดตารางสอบ (Solve)`** (`icon=":material/play_arrow:"`) ซึ่งยิงไปที่ `POST /solve`
 - **สิ่งที่แสดงหลังกดปุ่ม:**
   1. **Metric Cards 5 ช่อง:** `Status`, `Hard Conflict Count`, `Penalty Score (P)`, `Attempts`, `Runtime (ms)`
-  2. **ตารางสอบสี 2 ช่วงต่อวัน (Morning vs Afternoon Schedule Grid):** แสดงว่าวันที่ 1..D ช่วงเช้าและช่วงบ่ายมีวิชาอะไรสอบบ้าง
-  3. **ตารางรายชื่อนักศึกษาที่โดนสอบติดกัน เช้า-บ่าย (`validation_details.consecutive_cases`):** คลิกเปิดดูได้ว่านักศึกษาคนไหน (`S001` ฯลฯ) สอบติดกันในวันไหน
+  2. **ตารางสอบสี 2 ช่วงต่อวัน (`:material/calendar_month:` Morning vs Afternoon Schedule Grid):** แสดงว่าวันที่ 1..D ช่วงเช้า (`ช่วงเช้า (Slot 1: Morning)`) และช่วงบ่าย (`ช่วงบ่าย (Slot 2: Afternoon)`) มีวิชาอะไรสอบบ้าง
+  3. **ตารางรายชื่อนักศึกษาที่โดนสอบติดกัน เช้า-บ่าย (`:material/search:` `validation_details.consecutive_cases`):** คลิกเปิดดูได้ว่านักศึกษาคนไหน (`S001` ฯลฯ) สอบติดกันในวันไหน หรือแสดงแบนเนอร์ `:material/celebration:` เมื่อ `Penalty = 0`
   4. **กราฟการลู่เข้า (Convergence Curve):** วาดจากฟิลด์ `history` แสดงค่า `best_penalty` ที่ลดลงตาม Iteration ของ ACO
 
-### แท็บที่ 3: 🏆 เปรียบเทียบ 3 อัลกอริทึม (Multi-Seed Benchmark Compare)
+### แท็บที่ 3: `:material/leaderboard:` เปรียบเทียบ 3 อัลกอริทึม (Multi-Seed Benchmark Compare)
 - **ปุ่มกดสำคัญ:**
-  - ปุ่ม **`🚀 เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)`** ซึ่งยิงไปที่ `POST /compare`
+  - ปุ่ม **`เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)`** (`icon=":material/rocket_launch:"`) ซึ่งยิงไปที่ `POST /compare`
 - **สิ่งที่แสดงหลังกดปุ่ม:**
-  1. **ตารางสรุปผลรวม (Summary Table):** เทียบ `Success Rate (%)`, `Best Penalty`, `Mean Penalty`, `Median Penalty`, `Std Penalty`, `Mean Runtime (ms)` ของ Greedy vs Random Feasible vs ACO
+  1. **ตารางสรุปผลรวม (`:material/bar_chart:` Summary Table):** เทียบ `Success Rate (%)`, `Best Penalty`, `Mean Penalty`, `Median Penalty`, `Std Penalty`, `Mean Runtime (ms)` ของ Greedy vs Random Feasible vs ACO
   2. **กราฟแท่ง (Bar Chart):** เปรียบเทียบ Best Penalty และ Mean Penalty ของทั้ง 3 วิธี
   3. **กราฟกระจายตัว (Box Plot):** แสดงการกระจายของค่า Penalty ในแต่ละ Seed เพื่อพิสูจน์ว่า ACO ให้ผลลัพธ์ที่สม่ำเสมอเพียงใด
   4. *(สิ่งที่โรสพัฒนาต่อยอดได้)*: แสดงตารางสอบที่ดีที่สุดของทั้ง 3 วิธีวางเทียบกัน และปุ่ม Download ผลลัพธ์เป็น CSV สำหรับทำสไลด์สรุป

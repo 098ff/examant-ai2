@@ -86,6 +86,6 @@ BACKEND_API_URL=http://localhost:8000 streamlit run app.py --server.port 8501
 
 ### 3. การแบ่งงานรายบุคคลและ Prompt สำหรับ AI Agent (`docs/tasks/`)
 - 👥 [00-tasks-overview.th.md](docs/tasks/00-tasks-overview.th.md) — ภาพรวมการแบ่งงาน 3 คน และขั้นตอนการเชื่อมงานเข้าด้วยกัน ([English](docs/tasks/00-tasks-overview.md))
-- 👩‍💻 [01-task-maimai-lead-aco.th.md](docs/tasks/01-task-maimai-lead-aco.th.md) — **คนที่ 1 (ไมไม - Lead):** พัฒนา ACO, Random Feasible และระบบเปรียบเทียบ `/compare` ([English](docs/tasks/01-task-maimai-lead-aco.md))
+- 👩‍💻 [01-task-mai-aco.th.md](docs/tasks/01-task-mai-aco.th.md) — **คนที่ 1 (ไม):** พัฒนา ACO, Random Feasible และระบบเปรียบเทียบ `/compare` ([English](docs/tasks/01-task-mai-aco.md))
 - 👩‍💻 [02-task-fai-db-greedy.th.md](docs/tasks/02-task-fai-db-greedy.th.md) — **คนที่ 2 (ฝ้าย):** สร้าง Dataset Generator, MongoDB Seeder และอัลกอริทึม Greedy ([English](docs/tasks/02-task-fai-db-greedy.md))
 - 👩‍💻 [03-task-rose-frontend.th.md](docs/tasks/03-task-rose-frontend.th.md) — **คนที่ 3 (โรส):** พัฒนาหน้าเว็บ Streamlit, ตารางสอบสี และกราฟสรุปผลการทดลอง ([English](docs/tasks/03-task-rose-frontend.md))

@@ -18,13 +18,13 @@
 
 - [x] **งานที่ 1: Setup Repository, Docker Compose และ MongoDB Connection** *(ดำเนินการวางโครงสร้างไว้ให้เรียบร้อยแล้วในรอบนี้)*
 - [ ] **งานที่ 2: พัฒนาอัลกอริทึม `Greedy` ใน `backend/app/algorithms/greedy.py`**
-  - แทนที่โค้ด `# TODO [คนที่ 2 - ฝ้าย]` ให้ครบตามกติกาใน `docs/01-project-idea-spec.md` (หัวข้อ 7.1):
+  - แทนที่โค้ด `# TODO [Person 2 - Fai]:` (และนำข้อความ `[STUB]` ใน `message` ออก) ให้ครบตามกติกาใน `docs/01-project-idea-spec.md` (หัวข้อ 7.1):
     1. เรียงลำดับวิชาจาก Degree ความขัดแย้งมากไปน้อย (`ordered_courses = graph.get_ordered_courses()`)
     2. สำหรับแต่ละวิชา `course_id` ดึงช่วงสอบที่ไม่ชน (`feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`)
     3. หาก `feasible_slots` ว่างเปล่า ให้คืนค่า `no_solution_found` (`partial_schedule = None`)
     4. หากมีช่วงสอบที่ใช้ได้ ให้คำนวณ `delta_p = graph.calculate_delta_penalty(course_id, slot_id, partial_schedule)` ของแต่ละช่วงสอบ แล้วเลือก `slot_id` ที่ทำให้ **`delta_p` น้อยที่สุด** (หากเท่ากัน เลือกช่วงสอบที่มาก่อนตามลำดับใน `feasible_slots`)
 - [ ] **งานที่ 3: สร้าง Dataset Generator (อย่างน้อย 3 ชุดที่มีความยากต่างกัน) และ Seed ลง MongoDB ใน `backend/scripts/seed_db.py`**
-  - ตาม `docs/00-idea-proposal.md` (หัวข้อ 4) และ `docs/01-project-idea-spec.md` (หัวข้อ 3):
+  - ไปที่ตำแหน่ง `TODO [Person 2 - Fai]:` ในฟังก์ชัน `get_all_seed_instances()` ของ `backend/scripts/seed_db.py` และสร้างข้อมูลจำลองตาม `docs/00-idea-proposal.md` (หัวข้อ 4) และ `docs/01-project-idea-spec.md` (หัวข้อ 3):
     - สร้างข้อมูลจำลองอย่างน้อย 3 ชุด เช่น:
       1. `easy_01` (หรือ `demo_01`): ~10 วิชา, นักศึกษา 40–50 คน, 3 วัน (6 ช่วงสอบ เช้า-บ่าย)
       2. `medium_01`: ~12 วิชา, นักศึกษา 60–80 คน, 3 วัน (6 ช่วงสอบ เช้า-บ่าย) ที่มีความหนาแน่นของการลงทะเบียนร่วมกันสูงขึ้น
@@ -85,12 +85,13 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
 4. @backend/app/algorithms/greedy.py และ @backend/scripts/seed_db.py
 
 งานที่ต้องการให้ทำ:
-1. แก้ไขไฟล์ @backend/app/algorithms/greedy.py เพื่อพัฒนาอัลกอริทึม Greedy ให้สมบูรณ์ตาม Spec ข้อ 7.1:
+1. แก้ไขไฟล์ @backend/app/algorithms/greedy.py เพื่อแทนที่ส่วน `# TODO [Person 2 - Fai]:` และพัฒนาอัลกอริทึม Greedy ให้สมบูรณ์ตาม Spec ข้อ 7.1:
    - เรียงลำดับวิชาด้วย `graph.get_ordered_courses()` (degree มากไปน้อย, tie-break ด้วย course_id)
    - สำหรับแต่ละวิชา หา `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`
    - เลือก slot ที่ทำให้ `graph.calculate_delta_penalty(course_id, slot_id, partial_schedule)` มีค่าน้อยที่สุด (หากเท่ากันให้เลือก slot แรกสุดตามลำดับ)
-   - คืนค่าผ่าน `build_solve_response(...)` โดยไม่มีข้อความ `[STUB]`
-2. แก้ไขไฟล์ @backend/scripts/seed_db.py เพื่อสร้างชุดข้อมูลจำลอง 3 ระดับความยาก (`easy_01`, `medium_01`, `hard_01`) เพิ่มเติมจาก `demo_01`:
+   - คืนค่าผ่าน `build_solve_response(...)` โดยไม่มีข้อความ `[STUB]` (`message=None`)
+2. แก้ไขไฟล์ @backend/scripts/seed_db.py (บริเวณ `TODO [Person 2 - Fai]:` ใน `get_all_seed_instances()`) เพื่อสร้างชุดข้อมูลจำลอง 3 ระดับความยาก (`easy_01`, `medium_01`, `hard_01`) เพิ่มเติมจาก `demo_01`:
    - ใช้เทคนิค Planted Feasible Assignment ตอนสุ่มนักศึกษาลงทะเบียน เพื่อให้รับประกันว่าทุกชุดข้อมูลมีคำตอบที่ `hard_conflict_count == 0` จริง
    - ตรวจสอบความถูกต้องของทุกชุดข้อมูลด้วย `validate_problem_input` และทดสอบรัน `solve_greedy` กับทุกชุดข้อมูลก่อนบันทึกเข้า MongoDB
+3. เขียนคอมเมนต์และ docstring ทั้งหมดในโค้ดเป็นภาษาอังกฤษและไม่ใช้อีโมจิ
 ```

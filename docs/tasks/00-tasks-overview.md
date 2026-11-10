@@ -18,7 +18,7 @@
 
 | Member | Primary Role | Key Files | Assigned Feature Branch | Individual Task Guide |
 | :--- | :--- | :--- | :--- | :--- |
-| **6630333721 Sippapas Chavanont (Mai)** | Master technical specification, **ACO** & **Random Feasible** algorithms, `/solve` and `/compare` APIs | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-maimai-lead-aco.md](01-task-maimai-lead-aco.md) |
+| **6630333721 Sippapas Chavanont (Mai)** | Master technical specification, **ACO** & **Random Feasible** algorithms, `/solve` and `/compare` APIs | - `backend/app/algorithms/aco.py`<br>- `backend/app/algorithms/random_feasible.py`<br>- `backend/app/routers/solver.py` | `feat/aco-random-solvers` | 👉 [01-task-mai-aco.md](01-task-mai-aco.md) |
 | **6631305321 Chanatda Konchom (Fai)** | Repo & Docker setup, **Dataset Generator (3 difficulty levels)** + **MongoDB Seeder**, **Greedy** baseline | - `docker-compose.yml`<br>- `backend/scripts/seed_db.py`<br>- `backend/app/algorithms/greedy.py` | `feat/dataset-seeder-greedy` | 👉 [02-task-fai-db-greedy.md](02-task-fai-db-greedy.md) |
 | **6632213421 Sasarose Buranapin (Rose)** | **Streamlit Frontend**, 2-slots-per-day colored timetable grid, interactive charts, and benchmark evaluation report | - `frontend/app.py`<br>- `frontend/components/sidebar.py`<br>- `frontend/components/schedule_grid.py`<br>- `frontend/components/charts.py` | `feat/streamlit-frontend-viz` | 👉 [03-task-rose-frontend.md](03-task-rose-frontend.md) |
 
@@ -63,8 +63,8 @@
 ## 3. Why Parallel Development Works Seamlessly
 
 The repository setup provides the foundational glue and starter stubs upfront:
-1. **Ready-to-Use Dataset (`demo_01`):** Maimai and Rose can test their algorithms and UI with `demo_01` on day one while Fai works on additional synthetic datasets (`easy_01`, `medium_01`, `hard_01`).
-2. **Shared `ConflictGraph` & `Central Validator` (`backend/app/core/`):** Both Fai (Greedy) and Maimai (Random & ACO) invoke identical functions for feasibility checks (`get_feasible_slots`) and penalty computations (`calculate_delta_penalty`), guaranteeing mathematical consistency.
+1. **Ready-to-Use Dataset (`demo_01`):** Mai and Rose can test their algorithms and UI with `demo_01` on day one while Fai works on additional synthetic datasets (`easy_01`, `medium_01`, `hard_01`).
+2. **Shared `ConflictGraph` & `Central Validator` (`backend/app/core/`):** Both Fai (Greedy) and Mai (Random & ACO) invoke identical functions for feasibility checks (`get_feasible_slots`) and penalty computations (`calculate_delta_penalty`), guaranteeing mathematical consistency.
 3. **Fully Functional API Stubs:** Rose can run `docker compose up` and build the Streamlit UI against live endpoints (`/instances`, `/solve`, `/compare`) without waiting for full algorithm implementations.
 
 ---
@@ -79,5 +79,5 @@ flowchart LR
 
 ### Pre-Video Checklist
 - [ ] **Fai:** At least 3 verified solvable datasets seeded in MongoDB (`easy_01`, `medium_01`, `hard_01`), and Greedy baseline selects slots with minimum incremental penalty.
-- [ ] **Maimai:** Random Feasible and ACO algorithms faithfully implement the equations from `AI2 Slide.pdf` and report `history` convergence points.
+- [ ] **Mai:** Random Feasible and ACO algorithms faithfully implement the equations from `AI2 Slide.pdf` and report `history` convergence points.
 - [ ] **Rose:** Streamlit dashboard renders the timetable grid, consecutive exam breakdown, convergence curves, and comparison charts ready for live screen recording.

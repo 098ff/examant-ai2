@@ -1,8 +1,8 @@
 <p align="right">
-  <b>🇬🇧 English</b> | <a href="01-task-maimai-lead-aco.th.md">🇹🇭 ภาษาไทย</a>
+  <b>🇬🇧 English</b> | <a href="01-task-mai-aco.th.md">🇹🇭 ภาษาไทย</a>
 </p>
 
-# 👩‍💻 Person 1 Guide: Sippapas Chavanont (Mai) — 6630333721 [Lead]
+# 👩‍💻 Person 1 Guide: Sippapas Chavanont (Mai) — 6630333721
 
 > **Course:** AI2 (2110477)  
 > **Assignee:** 6630333721 Sippapas Chavanont (Mai)  
@@ -14,17 +14,17 @@
 
 ---
 
-## 1. Action Checklist for Maimai
+## 1. Action Checklist for Mai
 
 - [ ] **Task 1: Review Shared Core Modules (`ConflictGraph` & `Central Validator`)**
   - Inspect [`backend/app/core/graph.py`](../../backend/app/core/graph.py) and [`backend/app/core/validator.py`](../../backend/app/core/validator.py), which are fully implemented according to your `01-project-idea-spec.md` specification.
 - [ ] **Task 2: Implement `Random Feasible` in `backend/app/algorithms/random_feasible.py`**
-  - Replace the `# TODO [คนที่ 1 - ไมไม]` stub with a loop running up to `params.max_attempts` candidate schedule attempts:
+  - Replace the `# TODO [Person 1 - Mai]:` stub (and remove the `[STUB]` response message) with a loop running up to `params.max_attempts` candidate schedule attempts:
     1. For each attempt, iterate through `ordered_courses = graph.get_ordered_courses()`. For each course, retrieve `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)` and randomly select a slot using `rng.choice(feasible_slots)`.
     2. If any course has no feasible slots (dead-end), discard the candidate and begin the next attempt immediately.
     3. If all courses are successfully assigned, compute the total penalty score and track the best schedule found (`best_schedule`), recording `best_iteration` and `history`.
 - [ ] **Task 3: Implement `ACO` in `backend/app/algorithms/aco.py`**
-  - Replace the `# TODO [คนที่ 1 - ไมไม]` stub with the full Ant System algorithm based on [`docs/02-aco-theory-and-mapping.md`](../02-aco-theory-and-mapping.md):
+  - Replace the `# TODO [Person 1 - Mai]:` stub (and remove the `[STUB]` response message) with the full Ant System algorithm based on [`docs/02-aco-theory-and-mapping.md`](../02-aco-theory-and-mapping.md):
     1. Initialize the pheromone matrix: `tau[course_id][slot_id] = params.initial_pheromone`.
     2. Loop through `iteration = 1 .. params.iterations`. In each iteration, launch `params.num_ants` ants. Each ant assigns slots to courses following `ordered_courses = graph.get_ordered_courses()`.
     3. For each assignment decision on course $c$ from `feasible_slots`:
@@ -90,15 +90,16 @@ Before writing code, review these files in order:
 4. @backend/app/algorithms/base.py
 
 Tasks:
-1. In @backend/app/algorithms/random_feasible.py, replace the stub with a complete Random Feasible implementation:
+1. In @backend/app/algorithms/random_feasible.py, replace the `# TODO [Person 1 - Mai]:` stub with a complete Random Feasible implementation:
    - Use `random.Random(params.seed)` for reproducibility.
    - Loop up to `params.max_attempts` times, assigning slots from `graph.get_feasible_slots(...)`.
-   - On dead-ends, restart the attempt; on success, record the lowest penalty schedule and history, returning via `build_solve_response(...)`.
-2. In @backend/app/algorithms/aco.py, replace the stub with a complete ACO Ant System implementation:
+   - On dead-ends, restart the attempt; on success, record the lowest penalty schedule and history, returning via `build_solve_response(...)` (with `message=None`).
+2. In @backend/app/algorithms/aco.py, replace the `# TODO [Person 1 - Mai]:` stub with a complete ACO Ant System implementation:
    - Maintain a 2D pheromone matrix `tau[course_id][slot_id]` initialized to `params.initial_pheromone`.
    - Compute heuristic visibility `eta(c, t) = 1.0 / (1.0 + delta_p)` from `graph.calculate_delta_penalty(...)`.
    - Select slots proportionally to `(tau ** params.alpha) * (eta ** params.beta)`.
    - After each iteration, apply evaporation `(1 - params.rho)` and deposit `params.q / (1.0 + penalty)` for valid schedules.
-   - Log `IterationHistoryPoint` for each iteration into `history` and return via `build_solve_response(...)`.
-3. Verify against `demo_01` to ensure `status == "success"` and `hard_conflict_count == 0`.
+   - Log `IterationHistoryPoint` for each iteration into `history` and return via `build_solve_response(...)` (with `message=None`).
+3. Write all code comments and docstrings in clear English without emojis.
+4. Verify against `demo_01` to ensure `status == "success"` and `hard_conflict_count == 0`.
 ```

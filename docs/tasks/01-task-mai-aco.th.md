@@ -1,8 +1,8 @@
 <p align="right">
-  <a href="01-task-maimai-lead-aco.md">🇬🇧 English</a> | <b>🇹🇭 ภาษาไทย</b>
+  <a href="01-task-mai-aco.md">🇬🇧 English</a> | <b>🇹🇭 ภาษาไทย</b>
 </p>
 
-# 👩‍💻 คู่มืองานของคนที่ 1: Sippapas Chavanont (Mai) — 6630333721 [Lead]
+# 👩‍💻 คู่มืองานของคนที่ 1: Sippapas Chavanont (Mai) — 6630333721
 
 > **รายวิชา:** AI2 (2110477)  
 > **ผู้รับผิดชอบ:** 6630333721 Sippapas Chavanont (Mai)  
@@ -14,17 +14,17 @@
 
 ---
 
-## 1. สรุปงานที่ไมไมต้องทำ (Checklist)
+## 1. สรุปงานที่ไมต้องทำ (Checklist)
 
 - [ ] **งานที่ 1: ตรวจสอบโมดูลกลาง (`ConflictGraph` และ `Central Validator`)**
-  - เปิดดูไฟล์ [`backend/app/core/graph.py`](../../backend/app/core/graph.py) และ [`backend/app/core/validator.py`](../../backend/app/core/validator.py) ซึ่งถูกเขียนไว้ตามสเปก `01-project-idea-spec.md` ของไมไมเรียบร้อยแล้ว
+  - เปิดดูไฟล์ [`backend/app/core/graph.py`](../../backend/app/core/graph.py) และ [`backend/app/core/validator.py`](../../backend/app/core/validator.py) ซึ่งถูกเขียนไว้ตามสเปก `01-project-idea-spec.md` เรียบร้อยแล้ว
 - [ ] **งานที่ 2: พัฒนาอัลกอริทึม `Random Feasible` ใน `backend/app/algorithms/random_feasible.py`**
-  - แทนที่โค้ด `# TODO [คนที่ 1 - ไมไม]` ด้วยลูปสุ่มสร้างตารางจำนวน `params.max_attempts` ครั้ง:
+  - แทนที่โค้ด `# TODO [Person 1 - Mai]:` (และนำข้อความ `[STUB]` ใน `message` ออก) ด้วยลูปสุ่มสร้างตารางจำนวน `params.max_attempts` ครั้ง:
     1. ในแต่ละ attempt เรียงวิชาตาม `ordered_courses = graph.get_ordered_courses()` (หรือสุ่มลำดับวิชา) แล้วสุ่มเลือกช่วงสอบจาก `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)` ด้วย `rng.choice(feasible_slots)`
     2. หากเจอวิชาที่ `feasible_slots` ว่างเปล่า (ติดทางตัน) ให้ข้ามไปเริ่ม attempt ใหม่ทันที
     3. หากจัดครบทุกวิชา ให้คำนวณ Penalty (ใช้ `validate_and_score_schedule` หรือรวม `delta_p`) แล้วเก็บตารางที่มี Penalty ต่ำที่สุด (`best_schedule`) พร้อมบันทึก `best_iteration` และ `history`
 - [ ] **งานที่ 3: พัฒนาอัลกอริทึม `ACO` ใน `backend/app/algorithms/aco.py`**
-  - แทนที่โค้ด `# TODO [คนที่ 1 - ไมไม]` ด้วยลูป Ant System ตามสมการใน [`docs/02-aco-theory-and-mapping.md`](../02-aco-theory-and-mapping.md):
+  - แทนที่โค้ด `# TODO [Person 1 - Mai]:` (และนำข้อความ `[STUB]` ใน `message` ออก) ด้วยลูป Ant System ตามสมการใน [`docs/02-aco-theory-and-mapping.md`](../02-aco-theory-and-mapping.md):
     1. สร้างตาราง Pheromone เริ่มต้น `tau[course_id][slot_id] = params.initial_pheromone`
     2. วนลูป `iteration = 1 .. params.iterations` โดยในแต่ละรอบส่งมด `params.num_ants` ตัวออกไปสร้างตารางทีละวิชาตาม `ordered_courses = graph.get_ordered_courses()`
     3. สำหรับมดแต่ละตัว เมื่อจะเลือกช่วงสอบให้วิชา $c$ จาก `feasible_slots`:
@@ -55,7 +55,7 @@ git checkout -b feat/aco-random-solvers
 
 ---
 
-## 3. วิธีรันและทดสอบส่วนของไมไม
+## 3. วิธีรันและทดสอบส่วนของไม
 
 ```bash
 # รันผ่าน Docker
@@ -69,7 +69,7 @@ docker compose up --build
 
 ## 4. การใช้ AI Agent ช่วยทำงาน (ลำดับไฟล์ที่ต้อง `@` และ Prompt Template)
 
-เมื่อไมไมเปิดโปรเจกต์ใน Cursor / Antigravity / Claude Code หรือ AI Coding Assistant แนะนำให้อ้างอิงไฟล์ตามลำดับนี้เพื่อให้ AI เข้าใจบริบททั้งหมดทันทีโดยไม่หลุดสเปก:
+เมื่อไมเปิดโปรเจกต์ใน Cursor / Antigravity / Claude Code หรือ AI Coding Assistant แนะนำให้อ้างอิงไฟล์ตามลำดับนี้เพื่อให้ AI เข้าใจบริบททั้งหมดทันทีโดยไม่หลุดสเปก:
 
 ### ลำดับการ `@` ไฟล์ให้อ่านก่อนสั่งงาน
 1. `@docs/01-project-idea-spec.md` (ข้อกำหนดหลักและสัญญา API)
@@ -90,15 +90,16 @@ docker compose up --build
 4. @backend/app/algorithms/base.py
 
 งานที่ต้องการให้ทำ:
-1. แก้ไขไฟล์ @backend/app/algorithms/random_feasible.py เพื่อแทนที่ส่วน STUB ด้วยอัลกอริทึม Random Feasible เต็มรูปแบบ:
+1. แก้ไขไฟล์ @backend/app/algorithms/random_feasible.py เพื่อแทนที่ส่วน `# TODO [Person 1 - Mai]:` (STUB) ด้วยอัลกอริทึม Random Feasible เต็มรูปแบบ:
    - ใช้ `random.Random(params.seed)` เพื่อความสามารถในการทำซ้ำ
    - วนลูปไม่เกิน `params.max_attempts` ครั้ง สร้างตารางทีละวิชาจาก `graph.get_feasible_slots(...)`
-   - ถ้าติดทางตันให้เริ่ม attempt ใหม่ ถ้าสร้างครบให้คำนวณ penalty และเก็บตารางที่ penalty ต่ำสุด พร้อมบันทึก `history` และคืนค่าผ่าน `build_solve_response(...)`
-2. แก้ไขไฟล์ @backend/app/algorithms/aco.py เพื่อแทนที่ส่วน STUB ด้วยอัลกอริทึม ACO เต็มรูปแบบ:
+   - ถ้าติดทางตันให้เริ่ม attempt ใหม่ ถ้าสร้างครบให้คำนวณ penalty และเก็บตารางที่ penalty ต่ำสุด พร้อมบันทึก `history` และคืนค่าผ่าน `build_solve_response(...)` (โดยไม่มีข้อความ `[STUB]`)
+2. แก้ไขไฟล์ @backend/app/algorithms/aco.py เพื่อแทนที่ส่วน `# TODO [Person 1 - Mai]:` (STUB) ด้วยอัลกอริทึม ACO เต็มรูปแบบ:
    - ใช้ Pheromone matrix `tau[course_id][slot_id]` เริ่มต้นที่ `params.initial_pheromone`
    - ใช้ Heuristic `eta(c, t) = 1.0 / (1.0 + delta_p)` จาก `graph.calculate_delta_penalty(c, t, partial_schedule)`
    - สุ่มเลือกช่วงสอบที่ feasible ด้วยความน่าจะเป็นแปรผันตาม `(tau ** params.alpha) * (eta ** params.beta)`
    - หลังจบแต่ละ iteration ให้ระเหยฟีโรโมน `(1 - params.rho)` และฝากฟีโรโมน `params.q / (1.0 + penalty)` สำหรับมดที่สร้างตารางสำเร็จ
-   - บันทึก `IterationHistoryPoint` ทุก iteration ลงใน `history` แล้วคืนค่าผ่าน `build_solve_response(...)`
-3. เขียนเทสต์สั้นๆ หรือรันทดสอบกับชุดข้อมูล `demo_01` เพื่อยืนยันว่าทั้ง `random_feasible` และ `aco` คืนค่า `status == "success"` และ `hard_conflict_count == 0`
+   - บันทึก `IterationHistoryPoint` ทุก iteration ลงใน `history` แล้วคืนค่าผ่าน `build_solve_response(...)` (โดยไม่มีข้อความ `[STUB]`)
+3. เขียนคอมเมนต์และ docstring ทั้งหมดในโค้ดเป็นภาษาอังกฤษและไม่ใช้อีโมจิ
+4. เขียนเทสต์สั้นๆ หรือรันทดสอบกับชุดข้อมูล `demo_01` เพื่อยืนยันว่าทั้ง `random_feasible` และ `aco` คืนค่า `status == "success"` และ `hard_conflict_count == 0`
 ```

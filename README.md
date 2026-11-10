@@ -89,6 +89,6 @@ All documentation is available in both **English** (main) and **Thai** (`*.th.md
 
 ### 3. Task Allocation & AI Agent Workflow (`docs/tasks/`)
 - 👥 [00-tasks-overview.md](docs/tasks/00-tasks-overview.md) — 3-person team workflow, milestones, and integration roadmap ([ภาษาไทย](docs/tasks/00-tasks-overview.th.md))
-- 👩‍💻 [01-task-maimai-lead-aco.md](docs/tasks/01-task-maimai-lead-aco.md) — **Person 1 (Maimai - Lead):** ACO, Random Feasible, and `/compare` benchmark logic ([ภาษาไทย](docs/tasks/01-task-maimai-lead-aco.th.md))
+- 👩‍💻 [01-task-mai-aco.md](docs/tasks/01-task-mai-aco.md) — **Person 1 (Mai):** ACO, Random Feasible, and `/compare` benchmark logic ([ภาษาไทย](docs/tasks/01-task-mai-aco.th.md))
 - 👩‍💻 [02-task-fai-db-greedy.md](docs/tasks/02-task-fai-db-greedy.md) — **Person 2 (Fai):** Dataset generator (3 difficulty levels), MongoDB seeder, and Greedy baseline ([ภาษาไทย](docs/tasks/02-task-fai-db-greedy.th.md))
 - 👩‍💻 [03-task-rose-frontend.md](docs/tasks/03-task-rose-frontend.md) — **Person 3 (Rose):** Streamlit frontend, timetable grid, visualization charts, and comparison report ([ภาษาไทย](docs/tasks/03-task-rose-frontend.th.md))

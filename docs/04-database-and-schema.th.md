@@ -44,9 +44,9 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
 ```json
 {
   "instance_id": "demo_01",
-  "name": "Demo 01 — ชุดข้อมูลสาธิตขนาดเล็ก (10 วิชา, 3 วัน / 6 ช่วงสอบ)",
+  "name": "Demo 01 — Small Benchmark Dataset (10 Courses, 3 Days / 6 Slots)",
   "seed": 42,
-  "description": "ข้อมูลจำลองเริ่มต้น 10 วิชา นักศึกษา 20 คน ช่วงสอบ 3 วัน (6 ช่วง เช้า-บ่าย)",
+  "description": "Programmatically generated 10-course, 20-student instance across 3 exam days (6 slots).",
   "courses": [
     {
       "course_id": "C01",
@@ -74,13 +74,13 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
       "slot_id": "D1_S1",
       "day_index": 1,
       "slot_index": 1,
-      "label": "วันที่ 1 ช่วงเช้า"
+      "label": "Day 1 Morning"
     },
     {
       "slot_id": "D1_S2",
       "day_index": 1,
       "slot_index": 2,
-      "label": "วันที่ 1 ช่วงบ่าย"
+      "label": "Day 1 Afternoon"
     }
   ]
 }
@@ -107,8 +107,8 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
     {"student_id": "S001", "course_id": "C02"}
   ],
   "slots": [
-    {"slot_id": "D1_S1", "day_index": 1, "slot_index": 1, "label": "วันที่ 1 ช่วงเช้า"},
-    {"slot_id": "D1_S2", "day_index": 1, "slot_index": 2, "label": "วันที่ 1 ช่วงบ่าย"}
+    {"slot_id": "D1_S1", "day_index": 1, "slot_index": 1, "label": "Day 1 Morning"},
+    {"slot_id": "D1_S2", "day_index": 1, "slot_index": 2, "label": "Day 1 Afternoon"}
   ]
 }
 ```
@@ -131,4 +131,4 @@ docker compose exec mongodb mongosh examant_db --eval "db.exam_instances.find({}
    curl -X POST http://localhost:8000/instances/seed
    ```
 3. **Seed ผ่านหน้าเว็บ Streamlit UI:**
-   บนหน้าจอ Streamlit Dashboard สามารถกดปุ่ม **"🌱 Seed Database"** เพื่อ populate หรือรีเซ็ตข้อมูลลง MongoDB ได้ทันที
+   บนหน้าจอ Streamlit Dashboard สามารถกดปุ่ม **"Seed Database ตอนนี้"** / **"Seed Database"** (`:material/database:`) เมื่อฐานข้อมูลว่าง หรือกดปุ่ม **"Re-seed Datasets เข้า MongoDB"** (`:material/refresh:`) ในเมนู **เครื่องมือจัดการฐานข้อมูล (Database Tools)** (`:material/build:`) บนแถบ Sidebar เพื่อ populate หรือรีเซ็ตข้อมูลลง MongoDB ได้ทันที
