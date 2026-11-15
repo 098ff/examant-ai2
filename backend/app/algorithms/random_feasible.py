@@ -1,68 +1,54 @@
-"""
-[Task for Person 1: Mai (Sippapas Chavanont)]
-Random Feasible Baseline Algorithm (`backend/app/algorithms/random_feasible.py`).
-
-Rules from `docs/01-project-idea-spec.md` (Section 7.2):
-1. Use `rng = random.Random(params.seed)` for reproducibility.
-2. Loop to generate schedules up to `params.max_attempts` budget:
-   - In each attempt, construct the schedule course-by-course by randomly choosing from:
-     `feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)`
-   - If any course encounters an empty `feasible_slots` (dead-end), mark the attempt failed and continue.
-3. For every fully assigned schedule, compute penalty (or use `validate_and_score_schedule`),
-   and track the schedule with the lowest `penalty_score` (`best_schedule`) along with `best_iteration` and `history`.
-"""
+"""Random feasible timetable search with independent candidate validation."""
 
 import random
 import time
 from typing import Dict, List, Optional
+
 from app.algorithms.base import build_solve_response
 from app.core.graph import ConflictGraph
-from app.schemas.models import (
-    AlgorithmParameters,
-    IterationHistoryPoint,
-    ProblemData,
-    SolveResponse,
-)
+from app.core.validator import validate_and_score_schedule
+from app.schemas.models import AlgorithmParameters, IterationHistoryPoint, ProblemData, ScheduleItem, SolveResponse
 
 
 def solve_random_feasible(problem: ProblemData, params: AlgorithmParameters) -> SolveResponse:
-    """Run Random Feasible baseline within `params.max_attempts` budget."""
+    """Try the full search budget and return the best valid timetable found."""
     start_time = time.perf_counter()
     rng = random.Random(params.seed)
     graph = ConflictGraph(problem)
-
-    # ==========================================================================
-    # TODO [Person 1 - Mai]:
-    # Implement random schedule generation loop for `params.max_attempts` rounds
-    # and keep the schedule with minimum penalty score.
-    # (Below is starter stub code that generates 1 round for early frontend testing)
-    # ==========================================================================
-    best_schedule: Optional[Dict[str, str]] = {}
     ordered_courses = graph.get_ordered_courses()
+    best_schedule: Optional[Dict[str, str]] = None
+    best_penalty: Optional[int] = None
+    best_iteration: Optional[int] = None
+    history: List[IterationHistoryPoint] = []
 
-    for course_id in ordered_courses:
-        feasible_slots = graph.get_feasible_slots(course_id, best_schedule)
-        if not feasible_slots:
-            best_schedule = None
-            break
-        best_schedule[course_id] = rng.choice(feasible_slots)
+    for attempt in range(1, params.max_attempts + 1):
+        partial_schedule: Dict[str, str] = {}
+        penalty = None
+        for course_id in ordered_courses:
+            feasible_slots = graph.get_feasible_slots(course_id, partial_schedule)
+            if not feasible_slots:
+                break
+            partial_schedule[course_id] = rng.choice(feasible_slots)
+        else:
+            _, _, candidate_penalty, details = validate_and_score_schedule(
+                problem, [ScheduleItem(course_id=c, slot_id=s) for c, s in partial_schedule.items()]
+            )
+            if details.is_valid:
+                penalty = candidate_penalty
+                if best_penalty is None or penalty < best_penalty:
+                    best_schedule = partial_schedule.copy()
+                    best_penalty = penalty
+                    best_iteration = attempt
 
-    history: List[IterationHistoryPoint] = [
-        IterationHistoryPoint(iteration=1, best_penalty=4, iteration_best_penalty=4, feasible_ants=1)
-    ]
+        history.append(IterationHistoryPoint(
+            iteration=attempt, best_penalty=best_penalty,
+            iteration_best_penalty=penalty, feasible_ants=int(penalty is not None),
+        ))
 
-    runtime_ms = (time.perf_counter() - start_time) * 1000.0
     return build_solve_response(
-        problem=problem,
-        algorithm="random_feasible",
-        schedule_dict=best_schedule,
-        runtime_ms=runtime_ms,
+        problem=problem, algorithm="random_feasible", schedule_dict=best_schedule,
+        runtime_ms=(time.perf_counter() - start_time) * 1000.0,
         attempts=params.max_attempts,
-        parameters_used={
-            "seed": params.seed,
-            "max_attempts": params.max_attempts,
-        },
-        best_iteration=1 if best_schedule else None,
-        history=history,
-        message="[STUB] Random Feasible starter stub executed. (TODO: Person 1 implement full max_attempts loop)",
+        parameters_used={"seed": params.seed, "max_attempts": params.max_attempts},
+        best_iteration=best_iteration, history=history, message=None,
     )
