@@ -58,8 +58,8 @@ except requests.exceptions.HTTPError as exc:
     else:
         st.error(f"HTTP Error จาก Backend: {exc}")
     st.stop()
-except Exception as exc:
-    st.error(f"ไม่สามารถเชื่อมต่อกับ FastAPI Backend ได้: {exc}")
+except Exception:
+    st.error("ไม่สามารถเชื่อมต่อกับ FastAPI Backend ได้ กรุณาตรวจสอบว่าส่วน Backend กำลังทำงานอยู่")
     st.info("ตรวจสอบว่า FastAPI Backend รันอยู่ที่พอร์ต 8000 หรือยัง: `docker compose up -d backend`")
     st.stop()
 
@@ -96,8 +96,8 @@ if st.session_state.get("active_instance_id") != instance_id:
 
 try:
     instance_detail = fetch_instance_detail(instance_id)
-except requests.RequestException as exc:
-    st.error(f"โหลดรายละเอียดชุดข้อมูล `{instance_id}` ไม่สำเร็จ: {exc}")
+except requests.RequestException:
+    st.error(f"โหลดรายละเอียดชุดข้อมูล `{instance_id}` ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง")
     st.stop()
 
 tab1, tab2, tab3 = st.tabs(
@@ -124,8 +124,8 @@ with tab1:
     try:
         graph_data = fetch_conflict_graph(instance_id)
         render_conflict_graph(graph_data, config["theme_mode"])
-    except requests.RequestException as exc:
-        st.error(f"โหลด Conflict Graph ไม่สำเร็จ: {exc}")
+    except requests.RequestException:
+        st.error("โหลด Conflict Graph ไม่สำเร็จ กรุณาตรวจสอบ Backend แล้วลองใหม่")
 
 # ==============================================================================
 # TAB 2: Single Algorithm Run
@@ -160,8 +160,8 @@ with tab2:
                 st.session_state["last_single_result"] = res
         except requests.Timeout:
             st.error("Backend ใช้เวลาประมวลผลนานเกินกำหนด กรุณาลดจำนวน ants/iterations แล้วลองใหม่")
-        except requests.RequestException as exc:
-            st.error(f"รันอัลกอริทึมไม่สำเร็จ: {exc}")
+        except requests.RequestException:
+            st.error("รันอัลกอริทึมไม่สำเร็จ เนื่องจากไม่สามารถติดต่อ Backend ได้")
 
     if "last_single_result" in st.session_state:
         res = st.session_state["last_single_result"]
@@ -220,8 +220,8 @@ with tab3:
                 st.session_state["last_compare_result"] = comp_res
         except requests.Timeout:
             st.error("Benchmark ใช้เวลานานเกินกำหนด กรุณาลดจำนวน runs, ants หรือ iterations แล้วลองใหม่")
-        except requests.RequestException as exc:
-            st.error(f"รัน Benchmark ไม่สำเร็จ: {exc}")
+        except requests.RequestException:
+            st.error("รัน Benchmark ไม่สำเร็จ เนื่องจากไม่สามารถติดต่อ Backend ได้")
 
     if "last_compare_result" in st.session_state:
         comp_res = st.session_state["last_compare_result"]
