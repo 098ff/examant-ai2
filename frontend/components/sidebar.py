@@ -17,6 +17,14 @@ def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Render sidebar controls and return selected dataset + parameter dictionary."""
     st.sidebar.header(":material/pest_control: ExamAnt Configuration")
 
+    theme_mode = st.sidebar.radio(
+        "Appearance",
+        options=["Light", "Dark"],
+        horizontal=True,
+        key="theme_mode",
+        help="เปลี่ยนสีของหน้าเว็บ กราฟ และตารางสอบ โดยไม่กระทบผลการทดลอง",
+    )
+
     if not instances:
         st.sidebar.warning("ไม่พบชุดข้อมูลใน MongoDB", icon=":material/warning:")
         st.sidebar.caption("เริ่มรัน MongoDB และ Seed ข้อมูลเข้าสู่ระบบ:")
@@ -83,6 +91,7 @@ def render_sidebar(instances: List[Dict[str, Any]]) -> Dict[str, Any]:
                 st.error(f"Error: {e}")
 
     return {
+        "theme_mode": theme_mode,
         "instance_id": instance_id,
         "seed": int(seed),
         "runs": int(runs),
