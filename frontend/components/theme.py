@@ -79,11 +79,24 @@ def apply_theme(mode: str) -> None:
             border: 1px solid var(--examant-border);
             border-radius: 12px;
         }}
+        [data-testid="stMetric"] {{
+            padding: 1rem 1.1rem;
+        }}
         [data-testid="stMetricValue"],
         [data-testid="stMetricValue"] > div,
         [data-testid="stMetricLabel"],
         [data-testid="stMetricLabel"] p {{
             color: var(--examant-text) !important;
+        }}
+        [data-testid="stMetricValue"],
+        [data-testid="stMetricValue"] > div {{
+            font-size: 1.55rem !important;
+            line-height: 1.25 !important;
+        }}
+        [data-testid="stMetricLabel"] p {{
+            font-size: 0.82rem !important;
+            line-height: 1.35 !important;
+            margin-bottom: 0.35rem !important;
         }}
         [data-testid="stDownloadButton"] button,
         button[kind="secondary"] {{
