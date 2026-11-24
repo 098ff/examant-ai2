@@ -86,6 +86,7 @@ All documentation is available in both **English** (main) and **Thai** (`*.th.md
 - 🍃 [04-database-and-schema.md](docs/04-database-and-schema.md) — MongoDB setup, embedded `exam_instances` collection schema, Compass guide, and DB seeder ([ภาษาไทย](docs/04-database-and-schema.th.md))
 - ⚙️ [05-way-of-work-backend.md](docs/05-way-of-work-backend.md) — Backend folder structure, API endpoints, ConflictGraph, and Central Validator usage ([ภาษาไทย](docs/05-way-of-work-backend.th.md))
 - 🎨 [06-way-of-work-frontend.md](docs/06-way-of-work-frontend.md) — Streamlit structure, parameter slider controls, demo tabs, and visualization guidelines ([ภาษาไทย](docs/06-way-of-work-frontend.th.md))
+- 📊 [07-benchmark-results-rose.md](docs/07-benchmark-results-rose.md) — Multi-seed baseline benchmark results, empirical findings, and interpretation ([ภาษาไทย](docs/07-benchmark-results-rose.th.md))
 
 ### 3. Task Allocation & AI Agent Workflow (`docs/tasks/`)
 - 👥 [00-tasks-overview.md](docs/tasks/00-tasks-overview.md) — 3-person team workflow, milestones, and integration roadmap ([ภาษาไทย](docs/tasks/00-tasks-overview.th.md))

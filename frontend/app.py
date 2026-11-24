@@ -92,6 +92,7 @@ instance_id = config["instance_id"]
 if st.session_state.get("active_instance_id") != instance_id:
     st.session_state["active_instance_id"] = instance_id
     st.session_state.pop("last_single_result", None)
+    st.session_state.pop("single_results_by_algo", None)
     st.session_state.pop("last_compare_result", None)
 
 try:
@@ -130,6 +131,12 @@ with tab1:
 # ==============================================================================
 # TAB 2: Single Algorithm Run
 # ==============================================================================
+SINGLE_ALGO_NAMES = {
+    "aco": "Ant Colony Optimization (ACO)",
+    "random_feasible": "Random Feasible",
+    "greedy": "Greedy Baseline",
+}
+
 with tab2:
     st.subheader(":material/science: ทดลองจัดตารางสอบรายอัลกอริทึม")
     col_algo, col_btn = st.columns([3, 1])
@@ -148,23 +155,38 @@ with tab2:
         st.write("")
         run_single_clicked = st.button("รันจัดตารางสอบ (Solve)", icon=":material/play_arrow:", type="primary", use_container_width=True)
 
+    params_payload = {"seed": config["seed"]}
+    if selected_algo == "random_feasible":
+        params_payload["max_attempts"] = config["max_attempts"]
+    elif selected_algo == "aco":
+        params_payload.update(config["aco"])
+
     if run_single_clicked:
-        params_payload = {"seed": config["seed"]}
-        if selected_algo == "random_feasible":
-            params_payload["max_attempts"] = config["max_attempts"]
-        elif selected_algo == "aco":
-            params_payload.update(config["aco"])
         try:
             with st.spinner(f"กำลังรัน {selected_algo.upper()}..."):
                 res = post_solve(instance_id, selected_algo, params_payload)
                 st.session_state["last_single_result"] = res
+                single_cache = st.session_state.setdefault("single_results_by_algo", {})
+                single_cache[selected_algo] = res
         except requests.Timeout:
             st.error("Backend ใช้เวลาประมวลผลนานเกินกำหนด กรุณาลดจำนวน ants/iterations แล้วลองใหม่")
         except requests.RequestException:
             st.error("รันอัลกอริทึมไม่สำเร็จ เนื่องจากไม่สามารถติดต่อ Backend ได้")
 
-    if "last_single_result" in st.session_state:
-        res = st.session_state["last_single_result"]
+    single_cache = st.session_state.get("single_results_by_algo", {})
+    res = single_cache.get(selected_algo)
+
+    if res is not None:
+        st.caption(
+            f"แสดงผลลัพธ์ของ **{SINGLE_ALGO_NAMES.get(selected_algo, selected_algo)}** "
+            f"บนชุดข้อมูล `{instance_id}`"
+        )
+        if res.get("parameters_used") and res.get("parameters_used") != params_payload:
+            st.info(
+                "พารามิเตอร์ใน Sidebar มีการเปลี่ยนแปลงจากการรันครั้งล่าสุดของวิธีนี้ — "
+                "กดปุ่ม **รันจัดตารางสอบ (Solve)** เพื่อคำนวณผลลัพธ์ใหม่",
+                icon=":material/sync:",
+            )
         if res.get("message"):
             st.info(res["message"])
 
@@ -191,6 +213,12 @@ with tab2:
                 title=f"กราฟการลู่เข้าของ {res['algorithm'].upper()}",
                 theme_mode=config["theme_mode"],
             )
+    else:
+        st.info(
+            f"เลือก **{SINGLE_ALGO_NAMES.get(selected_algo, selected_algo)}** แล้ว — "
+            "กดปุ่ม **รันจัดตารางสอบ (Solve)** เพื่อคำนวณและแสดงตารางสอบ",
+            icon=":material/play_circle:",
+        )
 
 # ==============================================================================
 # TAB 3: Multi-Algorithm Comparison

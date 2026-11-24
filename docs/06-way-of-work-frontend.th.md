@@ -14,12 +14,15 @@
 frontend/
 ├── Dockerfile
 ├── requirements.txt
+├── .streamlit/
+│   └── config.toml               # ตั้งค่าธีมสีเริ่มต้น (Light theme) และฟอนต์ของ Streamlit
 ├── app.py                        # หน้าหลักของเว็บ (แบ่งเป็น Sidebar + 3 Tabs)
 ├── api_client.py                 # ฟังก์ชันยิง HTTP Request ไปหา FastAPI (พร้อมใช้งานแล้ว)
 └── components/
-    ├── sidebar.py                # แถบด้านข้างสำหรับเลือก Dataset และเลื่อนปรับค่า Parameters
-    ├── schedule_grid.py          # ตารางแสดงผลช่วงสอบ (เช้า-บ่าย) และรายชื่อคนสอบติดกัน
-    └── charts.py                 # กราฟ Conflict Graph, Convergence Curve และกราฟเปรียบเทียบ 3 วิธี
+    ├── sidebar.py                # สวิตช์สลับโหมดสี (Light/Dark) + แถบเลือก Dataset และเลื่อนปรับค่า Parameters
+    ├── schedule_grid.py          # การ์ดตารางแสดงผลช่วงสอบ (เช้า-บ่าย), ไฮไลต์วิชาที่สอบติดกัน และรายชื่อนักศึกษาที่ได้รับผลกระทบ
+    ├── charts.py                 # กราฟ Conflict Graph, Convergence Curve, การ์ดผู้ชนะ และกราฟเปรียบเทียบ 3 วิธี
+    └── theme.py                  # โทเคนสี Light/Dark, CSS variables และสีประจำอัลกอริทึม
 ```
 
 > **💡 จุดเด่นของการแยกไฟล์และข้อตกลงการเขียนโค้ด (Code & Icon Conventions):**  
@@ -35,6 +38,7 @@ frontend/
 
 | ชื่อตัวแปรใน API | ชนิด UI Component | ช่วงค่า (Min – Max) | ค่าเริ่มต้น (Default) | ใช้กับอัลกอริทึม | คำอธิบายบนหน้าจอ |
 | :--- | :--- | :---: | :---: | :--- | :--- |
+| `theme_mode` | `st.radio` | `Light` / `Dark` | `Light` | ธีมหน้าเว็บ | สลับโหมดสีของหน้าเว็บ ตารางสอบ และกราฟ Plotly ระหว่างโหมดสว่างและมืด |
 | `instance_id` | `st.selectbox` | ดึงจาก `GET /instances` | `demo_01` | ทุกวิธี | เลือกชุดข้อมูลปัญหาจัดตารางสอบ |
 | `seed` | `st.number_input` | `1 – 999999` | `42` | ทุกวิธี | Random Seed (เพื่อให้ทำซ้ำผลเดิมได้) |
 | `runs` | `st.slider` | `1 – 30` | `10` | หน้า `/compare` | จำนวนรอบการทดลอง (Seeds) ตอนเปรียบเทียบ |
@@ -66,17 +70,22 @@ frontend/
 - **ปุ่มกดสำคัญ:**
   - ปุ่มเลือกวิธี (`:material/pest_control: Ant Colony Optimization (ACO)`, `:material/casino: Random Feasible`, `:material/bolt: Greedy Baseline`)
   - ปุ่ม **`รันจัดตารางสอบ (Solve)`** (`icon=":material/play_arrow:"`) ซึ่งยิงไปที่ `POST /solve`
+- **การจัดการ State และ UX:**
+  - แยกเก็บผลลัพธ์รายอัลกอริทึม (`single_results_by_algo`) สำหรับชุดข้อมูลปัจจุบัน ทำให้สลับปุ่ม Radio ดูผลลัพธ์ของแต่ละวิธีที่รันไปแล้วได้ทันทีโดยไม่แสดงตัวเลขข้ามวิธี และมีแบนเนอร์ `:material/sync:` แจ้งเตือนเมื่อมีการขยับพารามิเตอร์ใน Sidebar
 - **สิ่งที่แสดงหลังกดปุ่ม:**
   1. **Metric Cards 5 ช่อง:** `Status`, `Hard Conflict Count`, `Penalty Score (P)`, `Attempts`, `Runtime (ms)`
-  2. **ตารางสอบสี 2 ช่วงต่อวัน (`:material/calendar_month:` Morning vs Afternoon Schedule Grid):** แสดงว่าวันที่ 1..D ช่วงเช้า (`ช่วงเช้า (Slot 1: Morning)`) และช่วงบ่าย (`ช่วงบ่าย (Slot 2: Afternoon)`) มีวิชาอะไรสอบบ้าง
-  3. **ตารางรายชื่อนักศึกษาที่โดนสอบติดกัน เช้า-บ่าย (`:material/search:` `validation_details.consecutive_cases`):** คลิกเปิดดูได้ว่านักศึกษาคนไหน (`S001` ฯลฯ) สอบติดกันในวันไหน หรือแสดงแบนเนอร์ `:material/celebration:` เมื่อ `Penalty = 0`
-  4. **กราฟการลู่เข้า (Convergence Curve):** วาดจากฟิลด์ `history` แสดงค่า `best_penalty` ที่ลดลงตาม Iteration ของ ACO
+  2. **ตารางสอบสี 2 ช่วงต่อวัน (`:material/calendar_month:` Morning vs Afternoon Schedule Cards):** แสดงการ์ดรายวิชาในช่วงเช้า (`ช่วงเช้า (Slot 1)`) และช่วงบ่าย (`ช่วงบ่าย (Slot 2)`) ของแต่ละวัน พร้อมจำนวนผู้เข้าสอบไม่ซ้ำต่อช่วงสอบ ป้ายสถานะ Penalty รายวัน และการไฮไลต์กรอบสีเตือนพร้อมป้าย `สอบติดกัน N คน คู่กับ ...` บนกล่องรายวิชาที่ทำให้เกิดการสอบติดกันโดยตรง
+  3. **ตารางรายชื่อนักศึกษาที่โดนสอบติดกัน เช้า-บ่าย (`:material/search:` `validation_details.consecutive_cases`):** คลิกเปิดดูได้ว่านักศึกษาคนไหน (`S001` ฯลฯ) สอบติดกันในวันไหน หรือแสดงแบนเนอร์ `:material/check_circle:` เมื่อ `Penalty = 0`
+  4. **กราฟการลู่เข้า (Convergence Curve):** วาดจากฟิลด์ `history` แสดงค่า `Global best penalty` และ `Iteration best penalty` ตามรอบของอัลกอริทึม
 
 ### แท็บที่ 3: `:material/leaderboard:` เปรียบเทียบ 3 อัลกอริทึม (Multi-Seed Benchmark Compare)
 - **ปุ่มกดสำคัญ:**
   - ปุ่ม **`เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)`** (`icon=":material/rocket_launch:"`) ซึ่งยิงไปที่ `POST /compare`
 - **สิ่งที่แสดงหลังกดปุ่ม:**
-  1. **ตารางสรุปผลรวม (`:material/bar_chart:` Summary Table):** เทียบ `Success Rate (%)`, `Best Penalty`, `Mean Penalty`, `Median Penalty`, `Std Penalty`, `Mean Runtime (ms)` ของ Greedy vs Random Feasible vs ACO
-  2. **กราฟแท่ง (Bar Chart):** เปรียบเทียบ Best Penalty และ Mean Penalty ของทั้ง 3 วิธี
-  3. **กราฟกระจายตัว (Box Plot):** แสดงการกระจายของค่า Penalty ในแต่ละ Seed เพื่อพิสูจน์ว่า ACO ให้ผลลัพธ์ที่สม่ำเสมอเพียงใด
-  4. *(สิ่งที่โรสพัฒนาต่อยอดได้)*: แสดงตารางสอบที่ดีที่สุดของทั้ง 3 วิธีวางเทียบกัน และปุ่ม Download ผลลัพธ์เป็น CSV สำหรับทำสไลด์สรุป
+  1. **การ์ดสรุปผู้ชนะ 3 ด้าน (`:material/emoji_events: ผลลัพธ์เด่น`):** แสดงวิธีที่ได้ **Best quality** (Median Penalty ต่ำสุด), **Fastest** (เวลาเฉลี่ยต่ำสุด) และ **Most reliable** (Success Rate สูงสุด) โดยแสดงชื่อผู้ชนะร่วมคั่นด้วย `" / "` เมื่อคะแนนเท่ากัน (เช่น `Greedy / Random Feasible / ACO` หรือ `Random Feasible / ACO`)
+  2. **ตารางสรุปผลรวม (`:material/bar_chart: สรุปผลการทดลอง`):** เทียบ `Runs`, `Successful runs`, `Success rate (%)`, `Best penalty`, `Mean penalty`, `Median penalty`, `Std penalty`, `Mean runtime (ms)` และ `Mean attempts` ของทั้ง 3 วิธี
+  3. **ปุ่มดาวน์โหลด CSV (`:material/download:`):** ดาวน์โหลดได้ทั้งตารางสรุป (`*_summary.csv`) และข้อมูลผลลัพธ์รายรอบ (`*_runs.csv`)
+  4. **กราฟแท่งเปรียบเทียบ 3 มิติ (3 Bar Charts):** เทียบคุณภาพคำตอบ (Best vs. Mean Penalty), Success Rate (%) และเวลาเฉลี่ย (Mean Runtime ms)
+  5. **กราฟเส้นและตารางผลแบบรอบต่อรอบ (`:material/timeline:`):** แสดงค่า Penalty ในแต่ละ Run / Seed เพื่อดูความสม่ำเสมอของคำตอบ
+  6. **แท็บตารางสอบที่ดีที่สุดและกราฟ Convergence ของแต่ละวิธี (`:material/calendar_month:` & `:material/trending_down:`):** สลับดูตารางสอบที่ดีที่สุด (`best_run_schedule`) และกราฟการลู่เข้า (`best_run_history`) ของแต่ละวิธีได้ทันที
+  7. **สรุปข้อค้นพบจากการทดลอง (`:material/lightbulb: Experiment Insights`):** สรุปประเด็นสำคัญจากตัวเลขผลการทดลองโดยอัตโนมัติ

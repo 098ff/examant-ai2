@@ -83,6 +83,7 @@ BACKEND_API_URL=http://localhost:8000 streamlit run app.py --server.port 8501
 - 🍃 [04-database-and-schema.th.md](docs/04-database-and-schema.th.md) — วิธีตั้งค่า MongoDB, โครงสร้าง Collection `exam_instances` และวิธี Seed ข้อมูล ([English](docs/04-database-and-schema.md))
 - ⚙️ [05-way-of-work-backend.th.md](docs/05-way-of-work-backend.th.md) — โครงสร้างโค้ด Backend, รายละเอียด API Endpoints และวิธีใช้งาน Central Validator ([English](docs/05-way-of-work-backend.md))
 - 🎨 [06-way-of-work-frontend.th.md](docs/06-way-of-work-frontend.th.md) — โครงสร้างโค้ด Streamlit, รายการ Sliders ปรับค่าพารามิเตอร์ และแนวทางการวาดกราฟ ([English](docs/06-way-of-work-frontend.md))
+- 📊 [07-benchmark-results-rose.th.md](docs/07-benchmark-results-rose.th.md) — ผลการทดลองเปรียบเทียบอัลกอริทึม 10 Seeds บนทุกชุดข้อมูลและการวิเคราะห์ผล ([English](docs/07-benchmark-results-rose.md))
 
 ### 3. การแบ่งงานรายบุคคลและ Prompt สำหรับ AI Agent (`docs/tasks/`)
 - 👥 [00-tasks-overview.th.md](docs/tasks/00-tasks-overview.th.md) — ภาพรวมการแบ่งงาน 3 คน และขั้นตอนการเชื่อมงานเข้าด้วยกัน ([English](docs/tasks/00-tasks-overview.md))

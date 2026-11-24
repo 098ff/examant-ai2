@@ -12,7 +12,9 @@
 > 2. [`frontend/components/sidebar.py`](../../frontend/components/sidebar.py)  
 > 3. [`frontend/components/schedule_grid.py`](../../frontend/components/schedule_grid.py)  
 > 4. [`frontend/components/charts.py`](../../frontend/components/charts.py)  
-> 5. [`frontend/api_client.py`](../../frontend/api_client.py) *(เตรียมฟังก์ชันเชื่อม Backend ไว้ให้ครบแล้ว)*
+> 5. [`frontend/components/theme.py`](../../frontend/components/theme.py) และ [`frontend/.streamlit/config.toml`](../../frontend/.streamlit/config.toml)  
+> 6. [`frontend/api_client.py`](../../frontend/api_client.py) *(เตรียมฟังก์ชันเชื่อม Backend ไว้ให้ครบแล้ว)*  
+> 7. [`docs/07-benchmark-results-rose.th.md`](../07-benchmark-results-rose.th.md) *(รายงานสรุปผลการทดลองเปรียบเทียบ 10 Seeds)*
 
 ---
 

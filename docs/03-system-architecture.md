@@ -24,6 +24,7 @@ flowchart LR
             Sidebar["components/sidebar.py"]
             Grid["components/schedule_grid.py"]
             Charts["components/charts.py"]
+            Theme["components/theme.py"]
             Client["api_client.py"]
         end
 
@@ -45,7 +46,7 @@ flowchart LR
     Swagger -->|"Port 8000"| MainPy
     Compass -->|"Port 27018 -> 27017"| MongoCol
 
-    AppPy --> Sidebar & Grid & Charts
+    AppPy --> Sidebar & Grid & Charts & Theme
     AppPy --> Client
     Client -->|"HTTP REST (http://backend:8000)"| Routers
     MainPy --> Routers
