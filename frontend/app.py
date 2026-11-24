@@ -25,6 +25,7 @@ from components.charts import (
 )
 from components.schedule_grid import render_schedule_grid
 from components.sidebar import render_sidebar
+from components.theme import apply_theme
 
 st.set_page_config(
     page_title="ExamAnt — ACO Exam Timetabling",
@@ -57,8 +58,8 @@ except requests.exceptions.HTTPError as exc:
     else:
         st.error(f"HTTP Error จาก Backend: {exc}")
     st.stop()
-except Exception as exc:
-    st.error(f"ไม่สามารถเชื่อมต่อกับ FastAPI Backend ได้: {exc}")
+except Exception:
+    st.error("ไม่สามารถเชื่อมต่อกับ FastAPI Backend ได้ กรุณาตรวจสอบว่าส่วน Backend กำลังทำงานอยู่")
     st.info("ตรวจสอบว่า FastAPI Backend รันอยู่ที่พอร์ต 8000 หรือยัง: `docker compose up -d backend`")
     st.stop()
 
@@ -85,8 +86,19 @@ config = render_sidebar(instances)
 if not config:
     st.stop()
 
+apply_theme(config["theme_mode"])
+
 instance_id = config["instance_id"]
-instance_detail = fetch_instance_detail(instance_id)
+if st.session_state.get("active_instance_id") != instance_id:
+    st.session_state["active_instance_id"] = instance_id
+    st.session_state.pop("last_single_result", None)
+    st.session_state.pop("last_compare_result", None)
+
+try:
+    instance_detail = fetch_instance_detail(instance_id)
+except requests.RequestException:
+    st.error(f"โหลดรายละเอียดชุดข้อมูล `{instance_id}` ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง")
+    st.stop()
 
 tab1, tab2, tab3 = st.tabs(
     [
@@ -109,8 +121,11 @@ with tab1:
     c3.metric("จำนวนการลงทะเบียน (Enrollments)", len(instance_detail["enrollments"]))
     c4.metric("จำนวนช่วงสอบ (Slots)", f"{len(instance_detail['slots'])} ({len(instance_detail['slots']) // 2} วัน)")
 
-    graph_data = fetch_conflict_graph(instance_id)
-    render_conflict_graph(graph_data)
+    try:
+        graph_data = fetch_conflict_graph(instance_id)
+        render_conflict_graph(graph_data, config["theme_mode"])
+    except requests.RequestException:
+        st.error("โหลด Conflict Graph ไม่สำเร็จ กรุณาตรวจสอบ Backend แล้วลองใหม่")
 
 # ==============================================================================
 # TAB 2: Single Algorithm Run
@@ -134,33 +149,48 @@ with tab2:
         run_single_clicked = st.button("รันจัดตารางสอบ (Solve)", icon=":material/play_arrow:", type="primary", use_container_width=True)
 
     if run_single_clicked:
-        params_payload = {
-            "seed": config["seed"],
-            "max_attempts": config["max_attempts"],
-            **config["aco"],
-        }
-        with st.spinner(f"กำลังรัน {selected_algo.upper()}..."):
-            res = post_solve(instance_id, selected_algo, params_payload)
-            st.session_state["last_single_result"] = res
+        params_payload = {"seed": config["seed"]}
+        if selected_algo == "random_feasible":
+            params_payload["max_attempts"] = config["max_attempts"]
+        elif selected_algo == "aco":
+            params_payload.update(config["aco"])
+        try:
+            with st.spinner(f"กำลังรัน {selected_algo.upper()}..."):
+                res = post_solve(instance_id, selected_algo, params_payload)
+                st.session_state["last_single_result"] = res
+        except requests.Timeout:
+            st.error("Backend ใช้เวลาประมวลผลนานเกินกำหนด กรุณาลดจำนวน ants/iterations แล้วลองใหม่")
+        except requests.RequestException:
+            st.error("รันอัลกอริทึมไม่สำเร็จ เนื่องจากไม่สามารถติดต่อ Backend ได้")
 
     if "last_single_result" in st.session_state:
         res = st.session_state["last_single_result"]
         if res.get("message"):
             st.info(res["message"])
 
-        metrics = res["metrics"]
+        metrics = res.get("metrics", {})
         m1, m2, m3, m4, m5 = st.columns(5)
-        m1.metric("สถานะ (Status)", res["status"].upper())
-        m2.metric("สอบชนกัน (Hard Conflict)", metrics["hard_conflict_count"])
-        m3.metric("สอบติดกัน เช้า-บ่าย (Penalty P)", metrics["penalty_score"])
-        m4.metric("จำนวนตารางที่ลอง (Attempts)", metrics["attempts"])
-        m5.metric("เวลาที่ใช้ (Runtime)", f"{metrics['runtime_ms']:.2f} ms")
+        m1.metric("สถานะ (Status)", res.get("status", "unknown").upper())
+        m2.metric("สอบชนกัน (Hard Conflict)", metrics.get("hard_conflict_count", "—"))
+        m3.metric("สอบติดกัน เช้า-บ่าย (Penalty P)", metrics.get("penalty_score", "—"))
+        m4.metric("จำนวนตารางที่ลอง (Attempts)", metrics.get("attempts", "—"))
+        runtime = metrics.get("runtime_ms")
+        m5.metric("เวลาที่ใช้ (Runtime)", f"{runtime:.2f} ms" if runtime is not None else "—")
 
         st.markdown("#### :material/calendar_month: ตารางสอบที่จัดได้ (2 ช่วงต่อวัน: เช้า / บ่าย)")
-        render_schedule_grid(instance_detail, res.get("schedule", []), res.get("validation_details"))
+        render_schedule_grid(
+            instance_detail,
+            res.get("schedule", []),
+            res.get("validation_details"),
+            config["theme_mode"],
+        )
 
         if res.get("history"):
-            render_convergence_chart(res["history"], title=f"กราฟการลู่เข้าของ {res['algorithm'].upper()}")
+            render_convergence_chart(
+                res["history"],
+                title=f"กราฟการลู่เข้าของ {res['algorithm'].upper()}",
+                theme_mode=config["theme_mode"],
+            )
 
 # ==============================================================================
 # TAB 3: Multi-Algorithm Comparison
@@ -168,8 +198,9 @@ with tab2:
 with tab3:
     st.subheader(":material/leaderboard: เปรียบเทียบ Greedy vs Random Feasible vs ACO")
     st.write(
-        f"รันเปรียบเทียบทั้ง 3 อัลกอริทึมบนชุดข้อมูล **`{instance_id}`** "
-        f"จำนวน **{config['runs']} รอบ (Seeds {config['seed']} ถึง {config['seed'] + config['runs'] - 1})**"
+        f"รัน Random Feasible และ ACO บนชุดข้อมูล **`{instance_id}`** จำนวน "
+        f"**{config['runs']} รอบ (Seeds {config['seed']} ถึง {config['seed'] + config['runs'] - 1})** "
+        "ส่วน Greedy เป็น deterministic baseline จึงรัน 1 รอบ"
     )
 
     if st.button("เริ่มรันเปรียบเทียบทั้ง 3 วิธี (Run Benchmark)", icon=":material/rocket_launch:", type="primary"):
@@ -177,16 +208,21 @@ with tab3:
             "random_feasible": {"max_attempts": config["max_attempts"]},
             "aco": config["aco"],
         }
-        with st.spinner("กำลังรันเปรียบเทียบทั้ง 3 อัลกอริทึม..."):
-            comp_res = post_compare(
-                instance_id=instance_id,
-                algorithms=["greedy", "random_feasible", "aco"],
-                runs=config["runs"],
-                seed_start=config["seed"],
-                parameters=compare_params,
-            )
-            st.session_state["last_compare_result"] = comp_res
+        try:
+            with st.spinner("กำลังรันเปรียบเทียบทั้ง 3 อัลกอริทึม..."):
+                comp_res = post_compare(
+                    instance_id=instance_id,
+                    algorithms=["greedy", "random_feasible", "aco"],
+                    runs=config["runs"],
+                    seed_start=config["seed"],
+                    parameters=compare_params,
+                )
+                st.session_state["last_compare_result"] = comp_res
+        except requests.Timeout:
+            st.error("Benchmark ใช้เวลานานเกินกำหนด กรุณาลดจำนวน runs, ants หรือ iterations แล้วลองใหม่")
+        except requests.RequestException:
+            st.error("รัน Benchmark ไม่สำเร็จ เนื่องจากไม่สามารถติดต่อ Backend ได้")
 
     if "last_compare_result" in st.session_state:
         comp_res = st.session_state["last_compare_result"]
-        render_comparison_charts(comp_res)
+        render_comparison_charts(comp_res, instance_detail, config["theme_mode"])
