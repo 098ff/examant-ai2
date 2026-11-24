@@ -219,6 +219,11 @@ def _best_run(raw_runs: Dict[str, Any], algorithm: str, schedule: List[Dict[str,
     return min(candidates, key=lambda run: run.get("metrics", {}).get("penalty_score", float("inf")), default=None)
 
 
+def _format_winners(algorithms: List[str]) -> str:
+    """Format one or more tied winning algorithms as a slash-separated display string."""
+    return " / ".join(ALGORITHM_LABELS.get(algo, algo) for algo in algorithms)
+
+
 def _experiment_insights(summaries: Dict[str, Any]) -> List[str]:
     """Generate cautious, data-backed observations from comparison summaries."""
     successful = {
@@ -229,16 +234,52 @@ def _experiment_insights(summaries: Dict[str, Any]) -> List[str]:
     if not successful:
         return ["ยังไม่มีอัลกอริทึมใดสร้างตารางสำเร็จ จึงยังเปรียบเทียบคุณภาพคำตอบไม่ได้"]
 
-    best_quality = min(successful, key=lambda algorithm: successful[algorithm]["median_penalty"])
-    fastest = min(summaries, key=lambda algorithm: summaries[algorithm].get("mean_runtime_ms", float("inf")))
-    most_reliable = max(summaries, key=lambda algorithm: summaries[algorithm].get("success_rate", 0))
+    min_median_penalty = min(summary["median_penalty"] for summary in successful.values())
+    best_quality_algos = [
+        algo for algo, summary in successful.items() if summary["median_penalty"] == min_median_penalty
+    ]
+
+    min_runtime = min(summary.get("mean_runtime_ms", float("inf")) for summary in summaries.values())
+    fastest_algos = [
+        algo for algo, summary in summaries.items() if summary.get("mean_runtime_ms", float("inf")) == min_runtime
+    ]
+
+    max_success_rate = max(summary.get("success_rate", 0) for summary in summaries.values())
+    most_reliable_algos = [
+        algo for algo, summary in summaries.items() if summary.get("success_rate", 0) == max_success_rate
+    ]
+
+    if len(best_quality_algos) > 1:
+        quality_insight = (
+            f"{_format_winners(best_quality_algos)} มี median penalty ต่ำที่สุดเท่ากัน "
+            f"({min_median_penalty}) ในรอบที่สำเร็จ"
+        )
+    else:
+        quality_insight = (
+            f"{_format_winners(best_quality_algos)} มี median penalty ต่ำที่สุด "
+            f"({min_median_penalty}) ในรอบที่สำเร็จ"
+        )
+
+    if len(most_reliable_algos) == len(summaries) and len(summaries) > 1:
+        reliability_insight = (
+            f"ทุกอัลกอริทึม ({_format_winners(most_reliable_algos)}) มี success rate เท่ากันที่ "
+            f"{max_success_rate * 100:.1f}%"
+        )
+    elif len(most_reliable_algos) > 1:
+        reliability_insight = (
+            f"{_format_winners(most_reliable_algos)} มี success rate สูงที่สุดเท่ากัน "
+            f"({max_success_rate * 100:.1f}%)"
+        )
+    else:
+        reliability_insight = (
+            f"{_format_winners(most_reliable_algos)} มี success rate สูงที่สุด "
+            f"({max_success_rate * 100:.1f}%)"
+        )
+
     insights = [
-        f"{ALGORITHM_LABELS.get(best_quality, best_quality)} มี median penalty ต่ำที่สุด "
-        f"({successful[best_quality]['median_penalty']}) ในรอบที่สำเร็จ",
-        f"{ALGORITHM_LABELS.get(fastest, fastest)} ใช้เวลาเฉลี่ยต่ำที่สุด "
-        f"({summaries[fastest].get('mean_runtime_ms', 0):.2f} ms)",
-        f"{ALGORITHM_LABELS.get(most_reliable, most_reliable)} มี success rate สูงที่สุด "
-        f"({summaries[most_reliable].get('success_rate', 0) * 100:.1f}%)",
+        quality_insight,
+        f"{_format_winners(fastest_algos)} ใช้เวลาเฉลี่ยต่ำที่สุด ({min_runtime:.2f} ms)",
+        reliability_insight,
     ]
     if "aco" in successful and "greedy" in successful:
         difference = successful["greedy"]["median_penalty"] - successful["aco"]["median_penalty"]
@@ -262,24 +303,36 @@ def _render_winner_cards(summaries: Dict[str, Any]) -> None:
         st.warning("ยังไม่มีรอบที่สร้างตารางสำเร็จ จึงยังระบุผู้ชนะไม่ได้")
         return
 
-    best_quality = min(successful, key=lambda algorithm: successful[algorithm]["median_penalty"])
-    fastest = min(summaries, key=lambda algorithm: summaries[algorithm].get("mean_runtime_ms", float("inf")))
-    most_reliable = max(summaries, key=lambda algorithm: summaries[algorithm].get("success_rate", 0))
+    min_median_penalty = min(summary["median_penalty"] for summary in successful.values())
+    best_quality_algos = [
+        algo for algo, summary in successful.items() if summary["median_penalty"] == min_median_penalty
+    ]
+
+    min_runtime = min(summary.get("mean_runtime_ms", float("inf")) for summary in summaries.values())
+    fastest_algos = [
+        algo for algo, summary in summaries.items() if summary.get("mean_runtime_ms", float("inf")) == min_runtime
+    ]
+
+    max_success_rate = max(summary.get("success_rate", 0) for summary in summaries.values())
+    most_reliable_algos = [
+        algo for algo, summary in summaries.items() if summary.get("success_rate", 0) == max_success_rate
+    ]
+
     cards = [
         (
             "Best quality",
-            ALGORITHM_LABELS.get(best_quality, best_quality),
-            f"Median penalty {successful[best_quality]['median_penalty']}",
+            _format_winners(best_quality_algos),
+            f"Median penalty {min_median_penalty}",
         ),
         (
             "Fastest",
-            ALGORITHM_LABELS.get(fastest, fastest),
-            f"{summaries[fastest].get('mean_runtime_ms', 0):.2f} ms average",
+            _format_winners(fastest_algos),
+            f"{min_runtime:.2f} ms average",
         ),
         (
             "Most reliable",
-            ALGORITHM_LABELS.get(most_reliable, most_reliable),
-            f"{summaries[most_reliable].get('success_rate', 0) * 100:.1f}% success rate",
+            _format_winners(most_reliable_algos),
+            f"{max_success_rate * 100:.1f}% success rate",
         ),
     ]
     columns = st.columns(3)

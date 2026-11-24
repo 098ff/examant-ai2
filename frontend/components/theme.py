@@ -19,6 +19,12 @@ THEME_TOKENS = {
         "muted": "#64748B",
         "border": "#E2E8F0",
         "plotly": "plotly_white",
+        "penalty_bg": "#FFFBEB",
+        "penalty_border": "#F59E0B",
+        "penalty_badge_bg": "#FEF3C7",
+        "penalty_badge_text": "#B45309",
+        "ok_badge_bg": "#D1FAE5",
+        "ok_badge_text": "#047857",
     },
     "Dark": {
         "background": "#0B1120",
@@ -28,6 +34,12 @@ THEME_TOKENS = {
         "muted": "#94A3B8",
         "border": "#334155",
         "plotly": "plotly_dark",
+        "penalty_bg": "rgba(245, 158, 11, 0.14)",
+        "penalty_border": "#F59E0B",
+        "penalty_badge_bg": "rgba(245, 158, 11, 0.24)",
+        "penalty_badge_text": "#FCD34D",
+        "ok_badge_bg": "rgba(16, 185, 129, 0.22)",
+        "ok_badge_text": "#6EE7B7",
     },
 }
 
@@ -167,9 +179,10 @@ def apply_theme(mode: str) -> None:
         }}
         .winner-card .winner {{
             color: var(--examant-text);
-            font-size: 1.35rem;
+            font-size: 1.25rem;
             font-weight: 800;
-            margin: 6px 0 2px;
+            line-height: 1.3;
+            margin: 6px 0 4px;
         }}
         .winner-card .value {{
             color: var(--examant-muted);
